@@ -42,7 +42,8 @@
     "test": "mocha --ui bdd --recursive ./dist/test --loader=ts-node/esm",
     "test:cov": "nyc --reporter=lcov --reporter=text-summary npm test",
     "version": "echo $npm_package_version",
-    "doc": "echo 'Documentation generation placeholder'"
+    "doc": "echo 'Documentation generation placeholder'",
+    "tsc": "tsc --noEmit"
   },
   "repository": {
     "type": "git",

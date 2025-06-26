@@ -14,55 +14,38 @@
  * limitations under the License.
  */
 
-type CorrectionLevel = 'high' | 'quartile' | 'medium' | 'low' | 'H' | 'Q' | 'M' | 'L' | undefined;
+type CorrectionLevel =
+  | "high"
+  | "quartile"
+  | "medium"
+  | "low"
+  | "H"
+  | "Q"
+  | "M"
+  | "L"
+  | undefined;
 
 /**
- * Class `QRCodeSettings` describes rules for the generation
- * of NIP-7 compliant QR Codes.
+ * Class `QRCodeSettings` describes rules for QR Code data generation
+ * (ESM version - simplified for data generation only).
  *
- * @since 0.2.0
+ * @since 1.0.0 (ESM migration)
  */
 class QRCodeSettings {
+  /**
+   * The Error correction level for QR Code generation.
+   *
+   * @var {CorrectionLevel}
+   */
+  public static CORRECTION_LEVEL: CorrectionLevel = "M";
 
-    /**
-     * The Error correction level.
-     *
-     * @var {ErrorCorrectLevel}
-     */
-    public static CORRECTION_LEVEL: CorrectionLevel = 'M';
-
-    /**
-     * The QR Code cell size in pixels.
-     *
-     * @var {number}
-     */
-    public static CELL_PIXEL_SIZE: number = 1;
-
-    /**
-     * The QR Code Margin in pixels.
-     *
-     * @var {number}
-     */
-    public static MARGIN_PIXEL: number = 2;
-
-    /**
-     * The QR Code Width in pixels.
-     *
-     * @var {number}
-     */
-    public static WIDTH: number = 250;
-
-    /**
-     * Constructor for QR code settings
-     */
-    constructor(
-        public readonly correctionLevel: CorrectionLevel = QRCodeSettings.CORRECTION_LEVEL,
-        public readonly widthPixel: number = QRCodeSettings.WIDTH,
-        public readonly cellPixelSize: number = QRCodeSettings.CELL_PIXEL_SIZE,
-        public readonly marginPixel: number = QRCodeSettings.MARGIN_PIXEL,
-    ) {
-
-    }
+  /**
+   * Constructor for QR code settings
+   */
+  constructor(
+    public readonly correctionLevel: CorrectionLevel = QRCodeSettings.CORRECTION_LEVEL
+  ) {}
 }
 
-export {CorrectionLevel, QRCodeSettings};
+export type { CorrectionLevel };
+export { QRCodeSettings };

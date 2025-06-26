@@ -16,91 +16,95 @@
 
 // internal dependencies
 import {
-    INetworkType,
-    QRCode,
-    QRCodeDataSchema,
-    QRCodeInterface,
-    QRCodeType,
-    RequestTransactionDataSchema,
-} from '../index';
-import {ITransaction} from "./sdk";
+  INetworkType,
+  QRCode,
+  QRCodeDataSchema,
+  QRCodeInterface,
+  QRCodeType,
+  RequestTransactionDataSchema,
+} from "../index";
+import { ITransaction } from "./sdk/index.js";
 
 class TransactionQR extends QRCode implements QRCodeInterface {
+  /**
+   * Construct a Transaction Request QR Code out of the
+   * symbol-sdk Transaction instance.
+   *
+   * @param   transaction     {Transaction}
+   * @param   networkType     {NetworkType}
+   * @param   generationHash         {string}
+   */
+  constructor(
     /**
-     * Construct a Transaction Request QR Code out of the
-     * symbol-sdk Transaction instance.
-     *
-     * @param   transaction     {Transaction}
-     * @param   networkType     {NetworkType}
-     * @param   generationHash         {string}
+     * The transaction for the request.
+     * @var {Transaction}
      */
-    constructor(/**
-                 * The transaction for the request.
-                 * @var {Transaction}
-                 */
-                public readonly transaction: ITransaction,
-                /**
-                 * The network type.
-                 * @var {NetworkType}
-                 */
-                public readonly networkType: INetworkType,
-                /**
-                 * The chain Id.
-                 * @var {string}
-                 */
-                public readonly generationHash: string,
-                /**
-                 * The QR Code Type
-                 *
-                 * @var {QRCodeType}
-                 */
-                public readonly type: QRCodeType = QRCodeType.RequestTransaction) {
-        super(type, networkType, generationHash);
-    }
-
+    public readonly transaction: ITransaction,
     /**
-     * Parse a JSON QR code content into a TransactionQR
-     * object.
-     *
-     * @param   json        {string}
-     * @param   transactionCreateFromPayload the transaction parser that creates a transaction from a binary payload.
-     * @return  {TransactionQR}
-     * @throws  {Error}     On empty `json` given.
-     * @throws  {Error}     On missing `type` field value.
-     * @throws  {Error}     On unrecognized QR code `type` field value.
+     * The network type.
+     * @var {NetworkType}
      */
-    public static fromJSON(
-        json: string,
-        transactionCreateFromPayload: (payload: string) => ITransaction,
-    ): TransactionQR {
-
-        // create the QRCode object from JSON
-        return RequestTransactionDataSchema.parse(json, transactionCreateFromPayload);
-    }
-
+    public readonly networkType: INetworkType,
     /**
-     * The `getTypeNumber()` method should return the
-     * version number for QR codes of the underlying class.
-     *
-     * @see https://en.wikipedia.org/wiki/QR_code#Storage
-     * @return {number}
+     * The chain Id.
+     * @var {string}
      */
-    public getTypeNumber(): number {
-        // Type version for ContactQR is Version 40, uses correction level L
-        // This type of QR can hold up to 2953 bytes of data.
-        return 40;
-    }
-
+    public readonly generationHash: string,
     /**
-     * The `getSchema()` method should return an instance
-     * of a sub-class of QRCodeDataSchema which describes
-     * the QR Code data.
+     * The QR Code Type
      *
-     * @return {QRCodeDataSchema}
+     * @var {QRCodeType}
      */
-    public getSchema(): QRCodeDataSchema {
-        return new RequestTransactionDataSchema();
-    }
+    public readonly type: QRCodeType = QRCodeType.RequestTransaction
+  ) {
+    super(type, networkType, generationHash);
+  }
+
+  /**
+   * Parse a JSON QR code content into a TransactionQR
+   * object.
+   *
+   * @param   json        {string}
+   * @param   transactionCreateFromPayload the transaction parser that creates a transaction from a binary payload.
+   * @return  {TransactionQR}
+   * @throws  {Error}     On empty `json` given.
+   * @throws  {Error}     On missing `type` field value.
+   * @throws  {Error}     On unrecognized QR code `type` field value.
+   */
+  public static fromJSON(
+    json: string,
+    transactionCreateFromPayload: (payload: string) => ITransaction
+  ): TransactionQR {
+    // create the QRCode object from JSON
+    return RequestTransactionDataSchema.parse(
+      json,
+      transactionCreateFromPayload
+    );
+  }
+
+  /**
+   * The `getTypeNumber()` method should return the
+   * version number for QR codes of the underlying class.
+   *
+   * @see https://en.wikipedia.org/wiki/QR_code#Storage
+   * @return {number}
+   */
+  public getTypeNumber(): number {
+    // Type version for ContactQR is Version 40, uses correction level L
+    // This type of QR can hold up to 2953 bytes of data.
+    return 40;
+  }
+
+  /**
+   * The `getSchema()` method should return an instance
+   * of a sub-class of QRCodeDataSchema which describes
+   * the QR Code data.
+   *
+   * @return {QRCodeDataSchema}
+   */
+  public getSchema(): QRCodeDataSchema {
+    return new RequestTransactionDataSchema();
+  }
 }
 
-export {TransactionQR};
+export { TransactionQR };

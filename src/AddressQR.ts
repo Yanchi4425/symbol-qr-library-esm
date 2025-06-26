@@ -14,90 +14,88 @@
  * limitations under the License.
  */
 
-
 // internal dependencies
 import {
-    QRCode,
-    QRCodeDataSchema,
-    QRCodeInterface,
-    QRCodeType,
-} from '../index';
-import {INetworkType} from "./sdk/INetworkType";
-import {ExportAddressDataSchema} from "./schemas/ExportAddressDataSchema";
+  QRCode,
+  QRCodeDataSchema,
+  QRCodeInterface,
+  QRCodeType,
+} from "../index";
+import { INetworkType } from "./sdk/INetworkType.js";
+import { ExportAddressDataSchema } from "./schemas/ExportAddressDataSchema.js";
 
 class AddressQR extends QRCode implements QRCodeInterface {
+  /**
+   * Construct a Address QR Code out of the
+   * symbol public key.
+   *
+   * @param name the address name.
+   * @param   accountPublicKey         the public key
+   * @param   networkType     {INetworkType}
+   * @param   generationHash         {string}
+   */
+  constructor(
     /**
-     * Construct a Address QR Code out of the
-     * symbol public key.
-     *
-     * @param name the address name.
-     * @param   accountPublicKey         the public key
-     * @param   networkType     {INetworkType}
-     * @param   generationHash         {string}
+     * The address name.
+     * @var {string}
      */
-    constructor(/**
-                 * The address name.
-                 * @var {string}
-                 */
-                public readonly name: string,
-                /**
-                 * The account address.
-                 */
-                public readonly accountAddress:string,
-                /**
-                 * The network type.
-                 * @var {NetworkType}
-                 */
-                public readonly networkType: INetworkType,
-                /**
-                 * The network generation hash.
-                 * @var {string}
-                 */
-                public readonly generationHash: string) {
-        super(QRCodeType.ExportAddress, networkType, generationHash);
-    }
-
+    public readonly name: string,
     /**
-     * Parse a JSON QR code content into an AddressQR
-     * object.
-     *
-     * @param   json        {string}
-     * @return  {AddressQR}
-     * @throws  {Error}     On empty `json` given.
-     * @throws  {Error}     On missing `type` field value.
-     * @throws  {Error}     On unrecognized QR code `type` field value.
+     * The account address.
      */
-    public static fromJSON(
-        json: string,
-    ): AddressQR {
-
-        // create the QRCode object from JSON
-        return ExportAddressDataSchema.parse(json);
-    }
-
+    public readonly accountAddress: string,
     /**
-     * The `getTypeNumber()` method should return the
-     * version number for QR codes of the underlying class.
-     *
-     * @see https://en.wikipedia.org/wiki/QR_code#Storage
-     * @return {number}
+     * The network type.
+     * @var {NetworkType}
      */
-    public getTypeNumber(): number {
-        // Type version for AddressQR is Version 15, uses correction level M
-        // This type of QR can hold up to 412 binary bytes.
-        return 15;
-    }
-
+    public readonly networkType: INetworkType,
     /**
-     * The `getSchema()` method should return an instance
-     * of a sub-class of QRCodeDataSchema which describes
-     * the QR Code data.
-     *
-     * @return {QRCodeDataSchema}
+     * The network generation hash.
+     * @var {string}
      */
-    public getSchema(): QRCodeDataSchema {
-        return new ExportAddressDataSchema();
-    }
+    public readonly generationHash: string
+  ) {
+    super(QRCodeType.ExportAddress, networkType, generationHash);
+  }
+
+  /**
+   * Parse a JSON QR code content into an AddressQR
+   * object.
+   *
+   * @param   json        {string}
+   * @return  {AddressQR}
+   * @throws  {Error}     On empty `json` given.
+   * @throws  {Error}     On missing `type` field value.
+   * @throws  {Error}     On unrecognized QR code `type` field value.
+   */
+  public static fromJSON(json: string): AddressQR {
+    // create the QRCode object from JSON
+    return ExportAddressDataSchema.parse(json);
+  }
+
+  /**
+   * The `getTypeNumber()` method should return the
+   * version number for QR codes of the underlying class.
+   *
+   * @see https://en.wikipedia.org/wiki/QR_code#Storage
+   * @return {number}
+   */
+  public getTypeNumber(): number {
+    // Type version for AddressQR is Version 15, uses correction level M
+    // This type of QR can hold up to 412 binary bytes.
+    return 15;
+  }
+
+  /**
+   * The `getSchema()` method should return an instance
+   * of a sub-class of QRCodeDataSchema which describes
+   * the QR Code data.
+   *
+   * @return {QRCodeDataSchema}
+   */
+  public getSchema(): QRCodeDataSchema {
+    return new ExportAddressDataSchema();
+  }
 }
 
-export {AddressQR};
+export { AddressQR };

@@ -13,59 +13,64 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Observable } from 'rxjs';
 
 // internal dependencies
-import {
-    QRCodeSettings,
-    QRCodeStreamType,
-    QRCodeType,
-} from '../index';
+import { QRCodeType } from "../index.js";
+
+/**
+ * Data structure for QR Code content
+ */
+interface QRCodeData {
+  v: number;
+  type: QRCodeType;
+  network_id: number;
+  chain_id: string;
+  data: any;
+}
 
 /**
  * Interface `QRCodeInterface` describes rules for the definition
- * of NIP-7 compliant QR Codes.
+ * of NIP-7 compliant QR Codes (ESM version - data generation only).
  *
- * @since 0.2.0
+ * @since 1.0.0 (ESM migration)
  */
 interface QRCodeInterface {
+  /**
+   * The type of the QR Code.
+   */
+  type: QRCodeType;
 
-    /**
-     * The type of the QR Code.
-     */
-    type: QRCodeType;
+  /**
+   * The `toJSON()` method should return the JSON
+   * representation of the QR Code content.
+   *
+   * @return {string}
+   */
+  toJSON(): string;
 
-    /**
-     * The `toJSON()` method should return the JSON
-     * representation of the QR Code content.
-     *
-     * @return {string}
-     */
-    toJSON(): string;
+  /**
+   * The `toQRData()` method should return the structured
+   * data object for QR Code generation by external libraries.
+   *
+   * @return {QRCodeData}
+   */
+  toQRData(): QRCodeData;
 
-    /**
-     * The `toBase64()` method should return the base64
-     * representation of the QR Code content.
-     *
-     * @param   {QRCodeSettings}    settings
-     * @return  {string}
-     */
-    toBase64(
-        settings: QRCodeSettings,
-    ): Observable<string>;
+  /**
+   * The `getDisplayText()` method should return a human-readable
+   * text representation of the QR Code content.
+   *
+   * @return {string}
+   */
+  getDisplayText(): string;
 
-    /**
-     * The `toString()` method should return the string
-     * representation of the QR Code content.
-     *
-     * @param   {QRCodeSettings}    settings
-     * @param   {QRCodeStreamType}  streamType
-     * @return {string}
-     */
-    toString(
-        settings: QRCodeSettings,
-        streamType: QRCodeStreamType,
-    ): Observable<string>;
+  /**
+   * The `validate()` method should validate the QR Code data
+   * integrity and return true if valid.
+   *
+   * @return {boolean}
+   */
+  validate(): boolean;
 }
 
-export {QRCodeInterface};
+export type { QRCodeInterface, QRCodeData };

@@ -21,79 +21,82 @@
  * @since 0.3.0
  */
 class EncryptedPayload {
-
-    constructor(/**
-                 * The payload ciphertext.
-                 * The first X bytes represent the IV.
-                 *
-                 * @var {string}
-                 */
-                public readonly ciphertext: string,
-                /**
-                 * The payload salt.
-                 *
-                 * @var {string}
-                 */
-                public readonly salt: string) {}
-
+  constructor(
     /**
-     * Parse a JSON representation of an encrypted
-     * payload into a `EncryptedPayload` instance.
+     * The payload ciphertext.
+     * The first X bytes represent the IV.
      *
-     * The provided JSON must contain fields 'ciphertext'
-     * and 'salt'.
+     * @var {string}
+     */
+    public readonly ciphertext: string,
+    /**
+     * The payload salt.
      *
-     * @param   {string}    json
-     * @return  {EncryptedPayload}
+     * @var {string}
      */
-    public static fromJSON(
-        json: string,
-    ): EncryptedPayload {
+    public readonly salt: string
+  ) {}
 
-        const jsonObject = EncryptedPayload.validateJson(json);
+  /**
+   * Parse a JSON representation of an encrypted
+   * payload into a `EncryptedPayload` instance.
+   *
+   * The provided JSON must contain fields 'ciphertext'
+   * and 'salt'.
+   *
+   * @param   {string}    json
+   * @return  {EncryptedPayload}
+   */
+  public static fromJSON(json: string): EncryptedPayload {
+    const jsonObject = EncryptedPayload.validateJson(json);
 
-        // validate obligatory fields
-        if (!jsonObject.hasOwnProperty('ciphertext')) {
-            throw new Error("Missing mandatory field 'ciphertext'.");
-        }
-
-        if (!jsonObject.hasOwnProperty('salt')) {
-            throw new Error("Missing mandatory field 'salt'.");
-        }
-
-        return new EncryptedPayload(jsonObject.ciphertext, jsonObject.salt);
+    // validate obligatory fields
+    if (!jsonObject.hasOwnProperty("ciphertext")) {
+      throw new Error("Missing mandatory field 'ciphertext'.");
     }
 
-    /**
-     * Validates given json string and returns json object
-     * @param json
-     * @return json object
-     * @throws {Error} If validation fails
-     */
-    private static validateJson(json: string) {
-        if (! json.length) {
-            throw new Error('JSON argument cannot be empty.');
-        }
-
-        // validate JSON
-        let jsonObject: any;
-        try {
-            jsonObject = JSON.parse(json);
-        } catch (e) {
-            // Invalid JSON provided, forward error
-            throw new Error('Invalid json body in payload! ' + e.message);
-        }
-        return jsonObject;
+    if (!jsonObject.hasOwnProperty("salt")) {
+      throw new Error("Missing mandatory field 'salt'.");
     }
 
-    /**
-     * Checks if the data ojbect is encrypted
-     * @param jsonObject
-     */
-    public static isDataEncrypted(jsonObject: any) : boolean {
-        return jsonObject.hasOwnProperty('ciphertext') && jsonObject.hasOwnProperty('salt');
+    return new EncryptedPayload(jsonObject.ciphertext, jsonObject.salt);
+  }
+
+  /**
+   * Validates given json string and returns json object
+   * @param json
+   * @return json object
+   * @throws {Error} If validation fails
+   */
+  private static validateJson(json: string) {
+    if (!json.length) {
+      throw new Error("JSON argument cannot be empty.");
     }
 
+    // validate JSON
+    let jsonObject: any;
+    try {
+      jsonObject = JSON.parse(json);
+    } catch (e) {
+      // Invalid JSON provided, forward error
+      throw new Error(
+        "Invalid json body in payload! " +
+          (e instanceof Error ? e.message : String(e))
+      );
+    }
+    return jsonObject;
+  }
+
+  /**
+   * Checks if the data ojbect is encrypted
+   * @param jsonObject
+   */
+  public static isDataEncrypted(jsonObject: any): boolean {
+    return (
+      jsonObject.hasOwnProperty("ciphertext") &&
+      jsonObject.hasOwnProperty("salt")
+    );
+  }
 }
 
-export {EncryptedPayload};
+export { EncryptedPayload };

@@ -16,14 +16,15 @@
 
 // internal dependencies
 import {
-    ITransaction,
-    QRCodeDataSchema,
-    QRCodeType,
-    TransactionQR,
-} from '../../index';
-import {SignedTransaction} from "symbol-sdk";
-import {SignedTransactionQR} from "../SignedTransactionQR";
-import {ISignedTransaction} from "../sdk/ISignedTransaction";
+  ITransaction,
+  QRCodeDataSchema,
+  QRCodeType,
+  TransactionQR,
+} from "../../index";
+// Note: SignedTransaction import removed to avoid external dependency
+// The ISignedTransaction interface is used instead
+import { SignedTransactionQR } from "../SignedTransactionQR";
+import { ISignedTransaction } from "../sdk/ISignedTransaction";
 
 /**
  * Class `SignedTransactionDataSchema` describes a transaction
@@ -32,59 +33,57 @@ import {ISignedTransaction} from "../sdk/ISignedTransaction";
  * @since 0.3.0
  */
 class SignedTransactionDataSchema extends QRCodeDataSchema {
+  constructor() {
+    super();
+  }
 
-    constructor() {
-        super();
+  /**
+   * The `getData()` method returns an object
+   * that will be stored in the `data` field of
+   * the underlying QR Code JSON content.
+   *
+   * @return {any}
+   */
+  public getData(qr: SignedTransactionQR): any {
+    // serialize the transaction object data.
+    const payload = qr.singedTransaction.toDTO();
+
+    return {
+      payload: payload,
+    };
+  }
+
+  /**
+   * Parse a JSON QR code content into a SignedTransactionQR
+   * object.
+   *
+   * @param   json    {string}
+   * @param   transactionCreateFromPayload the transaction parser that creates a transaction from a binary payload.
+   * @return  {TransactionQR}
+   * @throws  {Error}     On empty `json` given.
+   * @throws  {Error}     On missing `type` field value.
+   * @throws  {Error}     On unrecognized QR code `type` field value.
+   */
+  public static parse(
+    json: string,
+    transactionCreateFromPayload: (payload: string) => ISignedTransaction
+  ): SignedTransactionQR {
+    if (!json.length) {
+      throw Error("JSON argument cannot be empty.");
     }
 
-    /**
-     * The `getData()` method returns an object
-     * that will be stored in the `data` field of
-     * the underlying QR Code JSON content.
-     *
-     * @return {any}
-     */
-    public getData(qr: SignedTransactionQR): any {
-
-        // serialize the transaction object data.
-        const payload = qr.singedTransaction.toDTO();
-
-        return {
-            "payload": payload,
-        };
+    const jsonObj = JSON.parse(json);
+    if (!jsonObj.type || jsonObj.type !== QRCodeType.SignedTransaction) {
+      throw Error("Invalid type field value for SignedTransactionQR.");
     }
 
-    /**
-     * Parse a JSON QR code content into a SignedTransactionQR
-     * object.
-     *
-     * @param   json    {string}
-     * @param   transactionCreateFromPayload the transaction parser that creates a transaction from a binary payload.
-     * @return  {TransactionQR}
-     * @throws  {Error}     On empty `json` given.
-     * @throws  {Error}     On missing `type` field value.
-     * @throws  {Error}     On unrecognized QR code `type` field value.
-     */
-    public static parse(
-        json: string,
-        transactionCreateFromPayload: (payload: string) => ISignedTransaction
-    ): SignedTransactionQR {
-        if (! json.length) {
-            throw Error('JSON argument cannot be empty.');
-        }
+    // read contact data
+    const transaction = transactionCreateFromPayload(jsonObj.data.payload);
+    const network = jsonObj.network_id;
+    const generationHash = jsonObj.chain_id;
 
-        const jsonObj = JSON.parse(json);
-        if (!jsonObj.type || jsonObj.type !== QRCodeType.SignedTransaction) {
-            throw Error('Invalid type field value for SignedTransactionQR.');
-        }
-
-        // read contact data
-        const transaction = transactionCreateFromPayload(jsonObj.data.payload);
-        const network = jsonObj.network_id;
-        const generationHash = jsonObj.chain_id;
-
-        return new SignedTransactionQR(transaction, network, generationHash);
-    }
+    return new SignedTransactionQR(transaction, network, generationHash);
+  }
 }
 
-export {SignedTransactionDataSchema};
+export { SignedTransactionDataSchema };

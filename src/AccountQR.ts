@@ -16,90 +16,94 @@
 
 // internal dependencies
 import {
-    ExportAccountDataSchema,
-    QRCode,
-    QRCodeDataSchema,
-    QRCodeInterface,
-    QRCodeType,
-} from '../index';
-import {INetworkType} from "./sdk/INetworkType";
+  ExportAccountDataSchema,
+  QRCode,
+  QRCodeDataSchema,
+  QRCodeInterface,
+  QRCodeType,
+} from "../index";
+import { INetworkType } from "./sdk/INetworkType.js";
 
 class AccountQR extends QRCode implements QRCodeInterface {
+  /**
+   * Construct an Account QR Code out of the
+   * symbol private key.
+   *
+   * @param   accountPrivateKey  {string}
+   * @param   password        {string}
+   * @param   networkType     {INetworkType}
+   * @param   generationHash  {string}
+   */
+  constructor(
     /**
-     * Construct an Account QR Code out of the
-     * symbol private key.
-     *
-     * @param   accountPrivateKey  {string}
-     * @param   password        {string}
-     * @param   networkType     {INetworkType}
-     * @param   generationHash  {string}
+     * The account to be exported
+     * @var {Account}
      */
-    constructor(/**
-                 * The account to be exported
-                 * @var {Account}
-                 */
-                public readonly accountPrivateKey: string,
-                /**
-                 * The network type.
-                 * @var {NetworkType}
-                 */
-                public readonly networkType: INetworkType,
-                /**
-                 * The network generation hash.
-                 * @var {string}
-                 */
-                public readonly generationHash: string,
-                /**
-                 * Optional password for encryption when not provided means non-password-protected
-                 * @var {string=}
-                 */
-                public readonly password?: string) {
-        super(QRCodeType.ExportAccount, networkType, generationHash, password !== undefined);
-    }
+    public readonly accountPrivateKey: string,
+    /**
+     * The network type.
+     * @var {NetworkType}
+     */
+    public readonly networkType: INetworkType,
+    /**
+     * The network generation hash.
+     * @var {string}
+     */
+    public readonly generationHash: string,
+    /**
+     * Optional password for encryption when not provided means non-password-protected
+     * @var {string=}
+     */
+    public readonly password?: string
+  ) {
+    super(
+      QRCodeType.ExportAccount,
+      networkType,
+      generationHash,
+      password !== undefined
+    );
+  }
 
-    /**
-     * Parse a JSON QR code content into a AccountQR
-     * object.
-     *
-     * @param   json        {string}
-     * @param   password    {string=} Optional password
-     * @return  {AccountQR}
-     * @throws  {Error}     On empty `json` given.
-     * @throws  {Error}     On missing `type` field value.
-     * @throws  {Error}     On unrecognized QR code `type` field value.
-     */
-    public static fromJSON(
-        json: string,
-        password?: string,
-    ): AccountQR {
-        // create the QRCode object from JSON
-        return ExportAccountDataSchema.parse(json, password);
-    }
+  /**
+   * Parse a JSON QR code content into a AccountQR
+   * object.
+   *
+   * @param   json        {string}
+   * @param   password    {string=} Optional password
+   * @return  {AccountQR}
+   * @throws  {Error}     On empty `json` given.
+   * @throws  {Error}     On missing `type` field value.
+   * @throws  {Error}     On unrecognized QR code `type` field value.
+   */
+  public static fromJSON(json: string, password?: string): AccountQR {
+    // create the QRCode object from JSON
+    return ExportAccountDataSchema.parse(json, password);
+  }
 
-    /**
-     * The `getTypeNumber()` method should return the
-     * version number for QR codes of the underlying class.
-     *
-     * @see https://en.wikipedia.org/wiki/QR_code#Storage
-     * @see {QRUtil.MAX_LENGTH}
-     * @return {number}
-     */
-    public getTypeNumber(): number {
-        // Type version for AccountQR is Version 15, uses correction level M
-        // This type of QR can hold up to 412 binary bytes.
-        return 15;
-    }
+  /**
+   * The `getTypeNumber()` method should return the
+   * version number for QR codes of the underlying class.
+   *
+   * @see https://en.wikipedia.org/wiki/QR_code#Storage
+   * @see {QRUtil.MAX_LENGTH}
+   * @return {number}
+   */
+  public getTypeNumber(): number {
+    // Type version for AccountQR is Version 15, uses correction level M
+    // This type of QR can hold up to 412 binary bytes.
+    return 15;
+  }
 
-    /**
-     * The `getSchema()` method should return an instance
-     * of a sub-class of QRCodeDataSchema which describes
-     * the QR Code data.
-     *
-     * @return {QRCodeDataSchema}
-     */
-    public getSchema(): QRCodeDataSchema {
-        return new ExportAccountDataSchema();
-    }
+  /**
+   * The `getSchema()` method should return an instance
+   * of a sub-class of QRCodeDataSchema which describes
+   * the QR Code data.
+   *
+   * @return {QRCodeDataSchema}
+   */
+  public getSchema(): QRCodeDataSchema {
+    return new ExportAccountDataSchema();
+  }
 }
 
-export {AccountQR};
+export { AccountQR };

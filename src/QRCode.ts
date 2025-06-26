@@ -13,210 +13,162 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { createCanvas } from 'canvas';
-import * as QRCodeCanvas from 'qrcode';
-import {
-    from as observableFrom,
-    Observable,
-} from 'rxjs';
 
 // internal dependencies
 import {
-    CorrectionLevel,
-    QRCodeDataSchema,
-    QRCodeInterface,
-    QRCodeSettings,
-    QRCodeStreamType,
-    QRCodeType,
-} from "../index";
-import {INetworkType} from "./sdk/INetworkType";
+  CorrectionLevel,
+  QRCodeDataSchema,
+  QRCodeInterface,
+  QRCodeData,
+  QRCodeType,
+} from "../index.js";
+import { INetworkType } from "./sdk/INetworkType.js";
 
 abstract class QRCode implements QRCodeInterface {
-
+  /**
+   * Construct a QR Code instance out of its type and network information.
+   *
+   * @param   type    {QRCodeType}
+   * @param   networkType {INetworkType}
+   * @param   generationHash {string}
+   * @param   encrypted {boolean}
+   */
+  constructor(
     /**
-     * Construct a QR Code instance out of its base64
-     * representation and type.
-     *
-     * @param   type    {QRCodeType}
-     * @param   base64  {string}
+     * The QR Code type.
+     * @var {QRCodeType}
      */
-    constructor(/**
-                 * The QR Code type.
-                 * @var {QRCodeType}
-                 */
-                public readonly type: QRCodeType,
-                /**
-                 * The network ID.
-                 * @var {number}
-                 */
-                public readonly networkType: INetworkType,
-                /**
-                 * The network generation hash.
-                 * @var {string}
-                 */
-                public readonly generationHash: string,
-                /**
-                 * Whether the data is encrypted
-                 * @var {boolean}
-                 */
-                public readonly encrypted: boolean = false,
-                /**
-                 * The base64 representation of the QR Code content.
-                 * @var {string}
-                 */
-                public readonly base64?: string
-                ) {
+    public readonly type: QRCodeType,
+    /**
+     * The network ID.
+     * @var {INetworkType}
+     */
+    public readonly networkType: INetworkType,
+    /**
+     * The network generation hash.
+     * @var {string}
+     */
+    public readonly generationHash: string,
+    /**
+     * Whether the data is encrypted
+     * @var {boolean}
+     */
+    public readonly encrypted: boolean = false
+  ) {}
+
+  /// region Abstract Methods
+  /**
+   * The `getSchema()` method should return an instance
+   * of a sub-class of QRCodeDataSchema which describes
+   * the QR Code data.
+   *
+   * @return {QRCodeDataSchema}
+   */
+  public abstract getSchema(): QRCodeDataSchema;
+
+  /**
+   * The `getTypeNumber()` method should return the
+   * version number for QR codes of the underlying class.
+   *
+   * @return {number}
+   */
+  public abstract getTypeNumber(): number;
+  /// end-region Abstract Methods
+
+  /**
+   * The `getCorrectionLevel()` method should return the
+   * QR Code correction level.
+   *
+   * Sub-classes may overload this method to provide with
+   * a different correction level.
+   *
+   * @return {CorrectionLevel}
+   */
+  public getCorrectionLevel(): CorrectionLevel {
+    return "M";
+  }
+
+  /**
+   * The `toJSON()` method should return the JSON
+   * representation of the QR Code content.
+   *
+   * @return {string}
+   */
+  public toJSON(): string {
+    // get the QR Code Data Schema
+    const schema = this.getSchema();
+
+    // create the JSON object for this QR Code
+    const json = schema.toObject(this);
+
+    // format to JSON
+    return JSON.stringify(json);
+  }
+
+  /**
+   * The `toQRData()` method returns the structured data object
+   * for QR Code generation by external libraries.
+   *
+   * @return {QRCodeData}
+   */
+  public toQRData(): QRCodeData {
+    // get the QR Code Data Schema
+    const schema = this.getSchema();
+
+    // create the data object for this QR Code
+    return schema.toObject(this);
+  }
+
+  /**
+   * The `getDisplayText()` method returns a human-readable
+   * text representation of the QR Code content.
+   *
+   * @return {string}
+   */
+  public getDisplayText(): string {
+    const data = this.toQRData();
+    const typeNames: Record<number, string> = {
+      [QRCodeType.AddContact]: "連絡先追加",
+      [QRCodeType.ExportAccount]: "アカウントエクスポート",
+      [QRCodeType.ExportAddress]: "アドレスエクスポート",
+      [QRCodeType.ExportMnemonic]: "ニーモニックエクスポート",
+      [QRCodeType.ExportObject]: "オブジェクトエクスポート",
+      [QRCodeType.RequestTransaction]: "トランザクション要求",
+      [QRCodeType.RequestCosignature]: "連署要求",
+      [QRCodeType.SignedTransaction]: "署名済みトランザクション",
+      [QRCodeType.CosignatureSignedTransaction]: "連署済みトランザクション",
+    };
+
+    const typeName = typeNames[data.type] || `不明なタイプ (${data.type})`;
+    const encrypted = this.encrypted ? " (暗号化)" : "";
+
+    return `${typeName}${encrypted} - ネットワーク: ${data.network_id}`;
+  }
+
+  /**
+   * The `validate()` method validates the QR Code data
+   * integrity and returns true if valid.
+   *
+   * @return {boolean}
+   */
+  public validate(): boolean {
+    try {
+      // Basic validation: check if we can generate valid JSON
+      const json = this.toJSON();
+      const parsed = JSON.parse(json);
+
+      // Check required fields
+      return !!(
+        parsed.v &&
+        parsed.type !== undefined &&
+        parsed.network_id !== undefined &&
+        parsed.chain_id &&
+        parsed.data
+      );
+    } catch (error) {
+      return false;
     }
-
-    /// region Abstract Methods
-    /**
-     * The `getSchema()` method should return an instance
-     * of a sub-class of QRCodeDataSchema which describes
-     * the QR Code data.
-     *
-     * @return {QRCodeDataSchema}
-     */
-    public abstract getSchema(): QRCodeDataSchema;
-    /**
-     * The `getTypeNumber()` method should return the
-     * version number for QR codes of the underlying class.
-     *
-     * @return {number}
-     */
-    public abstract getTypeNumber(): number;
-    /// end-region Abstract Methods
-
-    /**
-     * The `getCorrectionLevel()` method should return the
-     * QR Code correction level.
-     *
-     * Sub-classes may overload this method to provide with
-     * a different correction level.
-     *
-     * @return {number}
-     */
-    public getCorrectionLevel(): CorrectionLevel {
-        return 'M';
-    }
-
-    /**
-     * The `toJSON()` method should return the JSON
-     * representation of the QR Code content.
-     *
-     * @return {string}
-     */
-    public toJSON(): string {
-
-        // get the QR Code Data Schema
-        const schema = this.getSchema();
-
-        // create the JSON object for this QR Code
-        const json = schema.toObject(this);
-
-        // format to JSON
-        return JSON.stringify(json);
-    }
-
-    /**
-     * Generate QRcode image Base64.
-     *
-     * The returned string can be put in the `src` attribute
-     * of a `<img />` tag directly in HTML. The produced image
-     * will be a PNG.
-     *
-     * @param   {QRCodeSettings}    settings     (Optional) Settings for generation
-     * @return  {Observable<string>} Return image data in Base64.
-     */
-    public toBase64(
-        settings: QRCodeSettings = new QRCodeSettings(),
-    ): Observable<string> {
-
-        // get JSON representation
-        const json = this.toJSON();
-
-        // get base64 representation
-        return observableFrom(QRCodeCanvas.toDataURL(json, {
-            errorCorrectionLevel: settings.correctionLevel,
-            // do-not-set-'width'
-            // do-not-set-'version'
-        }) as Promise<string>);
-    }
-
-    /**
-     * Generate QRCode as a string. This permits to display SVG
-     * format, Terminal format or utf-8 format.
-     *
-     * @see https://www.npmjs.com/package/qrcode
-     * @param   {QRCodeSettings}    settings     (Optional) Settings for generation
-     * @param   {QRCodeTextType}    streamType   (Optional) The QR Code text type, defaults to "terminal"
-     * @return  {Observable<string>}
-     */
-    public toString(
-        settings: QRCodeSettings = new QRCodeSettings(),
-        streamType: QRCodeStreamType = QRCodeStreamType.Terminal,
-    ): Observable<string> {
-
-        // get JSON representation
-        const json = this.toJSON();
-
-        // build the QR Code
-        return observableFrom(QRCodeCanvas.toString(json, {
-            errorCorrectionLevel: settings.correctionLevel,
-            width: settings.widthPixel,
-            type: streamType,
-            // do-not-set-'version'
-        }) as Promise<string>);
-    }
-
-    /**
-     * Generate QRCode and return object.
-     *
-     * @see https://www.npmjs.com/package/qrcode
-     * @param   {QRCodeSettings}    settings     (Optional) Settings for generation
-     * @return  {Observable<string>}
-     */
-    public toObject(
-        settings: QRCodeSettings = new QRCodeSettings(),
-    ): Observable<any> {
-
-        // get JSON representation
-        const json = this.toJSON();
-
-        // build the QR Code
-        return observableFrom([QRCodeCanvas.create(json, {
-            errorCorrectionLevel: settings.correctionLevel,
-            // do-not-set-'width'
-            // do-not-set-'version'
-        })]);
-    }
-
-    /**
-     * Generate QRCode to be printed on a `node-canvas`. This
-     * is compatible with the browser and node.
-     *
-     * @see https://www.npmjs.com/package/qrcode
-     * @see https://www.npmjs.com/package/canvas
-     * @param   {QRCodeSettings}    settings     (Optional) Settings for generation
-     * @return  {Observable<string>}
-     */
-    public toCanvas(
-        settings: QRCodeSettings = new QRCodeSettings(),
-    ): Observable<string> {
-
-        // get JSON representation
-        const json = this.toJSON();
-
-        // create canvas
-        const canvas = createCanvas(250, 250);
-        const context = canvas.getContext('2d');
-
-        // build the QR Code
-        return observableFrom(QRCodeCanvas.toCanvas(canvas, json, {
-            errorCorrectionLevel: settings.correctionLevel,
-            width: settings.widthPixel,
-            // do-not-set-'version'
-        }) as Promise<string>);
-    }
+  }
 }
 
-export {QRCode};
+export { QRCode };
