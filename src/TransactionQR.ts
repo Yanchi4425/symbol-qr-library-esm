@@ -23,7 +23,7 @@ import {
   QRCodeType,
   RequestTransactionDataSchema,
 } from "../index";
-import { ITransaction } from "./sdk/index.js";
+import { ITransaction } from "./sdk/index";
 
 class TransactionQR extends QRCode implements QRCodeInterface {
   /**

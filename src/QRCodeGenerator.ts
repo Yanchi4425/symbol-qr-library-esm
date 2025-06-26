@@ -28,8 +28,8 @@ import {
   SignedTransactionQR,
   TransactionQR,
 } from "../index";
-import { INetworkType, ITransaction } from "./sdk/index.js";
-import { ISignedTransaction } from "./sdk/ISignedTransaction.js";
+import { INetworkType, ITransaction } from "./sdk/index";
+import { ISignedTransaction } from "./sdk/ISignedTransaction";
 
 /**
  * Class `QRCodeGenerator` describes a NIP-7 compliant QR Code

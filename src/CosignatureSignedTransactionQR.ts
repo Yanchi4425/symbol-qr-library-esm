@@ -23,8 +23,8 @@ import {
   QRCodeType,
   RequestTransactionDataSchema,
 } from "../index";
-import { INetworkType } from "./sdk/index.js";
-import { CosignatureSignedTransactionDataSchema } from "./schemas/CosignatureSignedTransactionDataSchema.js";
+import { INetworkType } from "./sdk/index";
+import { CosignatureSignedTransactionDataSchema } from "./schemas/CosignatureSignedTransactionDataSchema";
 
 class CosignatureSignedTransactionQR extends QRCode implements QRCodeInterface {
   /**

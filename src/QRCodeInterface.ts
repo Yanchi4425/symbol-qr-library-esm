@@ -15,7 +15,7 @@
  */
 
 // internal dependencies
-import { QRCodeType } from "../index.js";
+import { QRCodeType } from "../index";
 
 /**
  * Data structure for QR Code content

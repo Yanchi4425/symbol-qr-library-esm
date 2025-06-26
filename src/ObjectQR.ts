@@ -22,7 +22,7 @@ import {
   QRCodeInterface,
   QRCodeType,
 } from "../index";
-import { INetworkType } from "./sdk/INetworkType.js";
+import { INetworkType } from "./sdk/INetworkType";
 
 class ObjectQR extends QRCode implements QRCodeInterface {
   /**

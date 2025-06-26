@@ -22,7 +22,7 @@ import {
   QRCodeInterface,
   QRCodeType,
 } from "../index";
-import { INetworkType } from "./sdk/index.js";
+import { INetworkType } from "./sdk/index";
 
 class MnemonicQR extends QRCode implements QRCodeInterface {
   /**

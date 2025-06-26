@@ -21,8 +21,8 @@ import {
   QRCodeInterface,
   QRCodeData,
   QRCodeType,
-} from "../index.js";
-import { INetworkType } from "./sdk/INetworkType.js";
+} from "../index";
+import { INetworkType } from "./sdk/INetworkType";
 
 abstract class QRCode implements QRCodeInterface {
   /**

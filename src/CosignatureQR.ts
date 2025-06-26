@@ -22,7 +22,7 @@ import {
   RequestCosignatureDataSchema,
   TransactionQR,
 } from "../index";
-import { INetworkType, ITransaction } from "./sdk/index.js";
+import { INetworkType, ITransaction } from "./sdk/index";
 
 class CosignatureQR extends TransactionQR implements QRCodeInterface {
   /**
