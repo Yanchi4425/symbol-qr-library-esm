@@ -49,22 +49,14 @@
       // Sample mnemonic phrase (24 words)
       const MNEMONIC_PHRASE = "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon art";
 
-      // TransactionQR created from JSON
-      const transactionInfo = {
-        v: 3,
-        type: 3,
-        network_id: 104,
-        chain_id:
-          "57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6",
-        data: {
-          payload:
-            "A500000000000000000000000000000000000000000000000000000000000000" +
-            "0000000000000000000000000000000000000000000000000000000000000000" +
-            "0000000000000000000000000000000000000000000000000000000000000000" +
-            "000000000190544100000000000000008CDC693819000000912C7BC6007CB8AC" +
-            "B8000000000000000000000000000000000100010044B262C46CEABB85010000" +
-            "0000000000",
-        },
+      // TransactionQR created from transaction data
+      const TRANSACTION_PAYLOAD = `B00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000016854410000000000000000266008A31F00000068890254125787DA2392BF5E5B2FCA5AE446AF1127304A320000010000000000F82302A23F91ED6B0000000000000000`;
+      
+      // Create a simple transaction object
+      const transaction = {
+        serialize: function() {
+          return TRANSACTION_PAYLOAD;
+        }
       };
 
       // create QR codes
@@ -89,10 +81,12 @@
         PASSWORD
       );
       
-      // // Create TransactionQR from JSON
-      // const transactionQR = TransactionQR.fromJSON(
-      //   JSON.stringify(transactionInfo)
-      // );
+      // Create TransactionQR from transaction object
+      const transactionQR = new TransactionQR(
+        transaction,
+        NETWORK_TYPE,
+        GENERATION_HASH
+      );
 
       window.addEventListener("DOMContentLoaded", function () {
         (async function () {
@@ -215,47 +209,48 @@ mnemonicImg.src = qr.toDataURL();
 
             console.log("MnemonicQR sample completed successfully");
 
-//             // TransactionQR Sample
-//             const transactionConstructorCode = `<script src="../dist/symbol-qr-library-esm.umd.js"><\/script>
-// <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"><\/script>
-// <script>
-//   const transactionImg = document.getElementById("qr-code-transaction");
-// const transactionInfo = {
-//   v: 3,
-//   type: 3,
-//   network_id: 104,
-//   chain_id: "57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6",
-//   data: {
-//     payload: "A500000000000000000000000000000000000000000000000000000000000000" +
-//              "0000000000000000000000000000000000000000000000000000000000000000" +
-//              "0000000000000000000000000000000000000000000000000000000000000000" +
-//              "000000000190544100000000000000008CDC693819000000912C7BC6007CB8AC" +
-//              "B8000000000000000000000000000000000100010044B262C46CEABB85010000" +
-//              "0000000000",
-//   },
-// };
-// const transactionQR = TransactionQR.fromJSON(JSON.stringify(transactionInfo));
-// const transactionJSON = transactionQR.toJSON();
-// const qr = new QRious({
-//   value: transactionJSON,
-//   size: 250,
-// });
-// transactionImg.src = qr.toDataURL();
-// <\/script>`;
-//             document.getElementById("transaction-constructor-call").value = transactionConstructorCode;
+            // TransactionQR Sample
+            const transactionConstructorCode = `<script src="../dist/symbol-qr-library-esm.umd.js"><\/script>
+<script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"><\/script>
+<script>
+  const transactionImg = document.getElementById("qr-code-transaction");
+// Transaction payload (hex string)
+const TRANSACTION_PAYLOAD = \`B00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000016854410000000000000000266008A31F00000068890254125787DA2392BF5E5B2FCA5AE446AF1127304A320000010000000000F82302A23F91ED6B0000000000000000\`;
 
-//             const transactionJSON = transactionQR.toJSON();
-//             const formattedTransactionJSON = JSON.stringify(JSON.parse(transactionJSON), null, 2);
-//             document.getElementById("transaction-json").value = formattedTransactionJSON;
+// Create transaction object
+const transaction = {
+  serialize: function() {
+    return TRANSACTION_PAYLOAD;
+  }
+};
 
-//             const transactionImg = document.getElementById("qr-code-transaction");
-//             const transactionQRCode = new QRious({
-//               value: transactionJSON,
-//               size: 250,
-//             });
-//             transactionImg.src = transactionQRCode.toDataURL();
+// Create TransactionQR (library adds v, type, network_id, chain_id automatically)
+const transactionQR = new TransactionQR(
+  transaction,
+  ${NETWORK_TYPE}, // network type(mainnet)
+  "${GENERATION_HASH}" // generation hash(mainnet)
+);
+const transactionJSON = transactionQR.toJSON();
+const qr = new QRious({
+  value: transactionJSON,
+  size: 250,
+});
+transactionImg.src = qr.toDataURL();
+<\/script>`;
+            document.getElementById("transaction-constructor-call").value = transactionConstructorCode;
 
-//             console.log("TransactionQR sample completed successfully");
+            const transactionJSON = transactionQR.toJSON();
+            const formattedTransactionJSON = JSON.stringify(JSON.parse(transactionJSON), null, 2);
+            document.getElementById("transaction-json").value = formattedTransactionJSON;
+
+            const transactionImg = document.getElementById("qr-code-transaction");
+            const transactionQRCode = new QRious({
+              value: transactionJSON,
+              size: 250,
+            });
+            transactionImg.src = transactionQRCode.toDataURL();
+
+            console.log("TransactionQR sample completed successfully");
 
           } catch (error) {
             console.error("Error generating QR samples:", error);
