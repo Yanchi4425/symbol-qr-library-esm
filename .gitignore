@@ -2,7 +2,7 @@
 .nyc_output/
 .awcache/
 release/
-dist/
+# dist/  # 一時的にコメントアウト - GitHub経由でのnpm installのため
 node_modules/
 ts-docs/
 examples/node_modules/

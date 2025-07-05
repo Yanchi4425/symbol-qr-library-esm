@@ -84,7 +84,7 @@ class ExportAccountDataSchema extends QRCodeDataSchema {
       throw new Error('Invalid type field value for AccountQR.');
     }
 
-    if (!jsonObj.hasOwnProperty('data')) {
+    if (!Object.hasOwn(jsonObj, 'data')) {
       throw new Error('Missing mandatory property for payload.');
     }
 
@@ -113,7 +113,7 @@ class ExportAccountDataSchema extends QRCodeDataSchema {
 
       // create account
       return new AccountQR(privKey, network, generationHash, password);
-    } catch (e) {
+    } catch {
       throw new Error('Could not parse account information.');
     }
   }
