@@ -73,7 +73,7 @@ class TransactionQR extends QRCode implements QRCodeInterface {
    */
   public static fromJSON(
     json: string,
-    transactionCreateFromPayload: (payload: string) => ITransaction
+    transactionCreateFromPayload?: (payload: string) => ITransaction
   ): TransactionQR {
     // create the QRCode object from JSON
     return RequestTransactionDataSchema.parse(

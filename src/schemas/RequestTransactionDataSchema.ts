@@ -38,9 +38,9 @@ class RequestTransactionDataSchema extends QRCodeDataSchema {
    * that will be stored in the `data` field of
    * the underlying QR Code JSON content.
    *
-   * @return {any}
+   * @return {{payload: string}}
    */
-  public getData(qr: TransactionQR): any {
+  public getData(qr: TransactionQR) {
     // serialize the transaction object data.
     const payload = qr.transaction.serialize();
 
@@ -62,7 +62,7 @@ class RequestTransactionDataSchema extends QRCodeDataSchema {
    */
   public static parse(
     json: string,
-    transactionCreateFromPayload: (payload: string) => ITransaction
+    transactionCreateFromPayload?: (payload: string) => ITransaction
   ): TransactionQR {
     if (!json.length) {
       throw Error('JSON argument cannot be empty.');
@@ -73,8 +73,14 @@ class RequestTransactionDataSchema extends QRCodeDataSchema {
       throw Error('Invalid type field value for TransactionQR.');
     }
 
+    const createTransaction =
+      transactionCreateFromPayload ||
+      ((payload: string) => ({
+        serialize: () => payload,
+      }));
+
     // read contact data
-    const transaction = transactionCreateFromPayload(jsonObj.data.payload);
+    const transaction = createTransaction(jsonObj.data.payload);
     const network = jsonObj.network_id;
     const generationHash = jsonObj.chain_id;
 
