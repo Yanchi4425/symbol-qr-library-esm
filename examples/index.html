@@ -1,129 +1,329 @@
 <!DOCTYPE html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>Example for nem2-qr-library</title>
-        <meta name="description" content="Browser Examples for nem2-qr-library">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <title>Example for symbol-qr-library-lite</title>
+    <meta
+      name="description"
+      content="Browser Examples for symbol-qr-library-lite"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        <script src="../_bundles/catapult-qr.js"></script>
-    </head>
+    <script src="../dist/symbol-qr-library-esm.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+  </head>
 
-    <body>
+  <body>
+    <script>
+      const QRCodeType = SymbolQR.QRCodeType;
+      const ContactQR = SymbolQR.ContactQR;
+      const AccountQR = SymbolQR.AccountQR;
+      const MnemonicQR = SymbolQR.MnemonicQR;
+      const TransactionQR = SymbolQR.TransactionQR;
+
+      // ContactQR created from JSON
+      const contactInfo = {
+        v: 3,
+        type: QRCodeType.AddContact,
+        network_id: 104,
+        chain_id: "no-chain-id",
+        data: {
+          name: "bob",
+          publicKey:
+            "3B6A27BCCEB6A42D62A3A8D02A6F0D73653215771DE243A63AC048A18B59DA29",
+        },
+      };
+
+      // AccountQR created from private key
+      // Sample private key
+      const PRIVATE_KEY = "1".repeat(64);
+      // Mainnet
+      const NETWORK_TYPE = 104;
+      // Mainnet generation hash
+      const GENERATION_HASH = "57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6";
+      // Encryption password
+      const PASSWORD = "password"; 
+
+      // MnemonicQR created from mnemonic phrase
+      // Sample mnemonic phrase (24 words)
+      const MNEMONIC_PHRASE = "roof south game bulk various radar fancy patch help situate snake record life wrap shy void fabric harvest wood west ghost violin worth auction";
+
+      // TransactionQR created from JSON
+      const transactionInfo = {
+        v: 3,
+        type: 3,
+        network_id: 104,
+        chain_id:
+          "57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6",
+        data: {
+          payload:
+            "A500000000000000000000000000000000000000000000000000000000000000" +
+            "0000000000000000000000000000000000000000000000000000000000000000" +
+            "0000000000000000000000000000000000000000000000000000000000000000" +
+            "000000000190544100000000000000008CDC693819000000912C7BC6007CB8AC" +
+            "B8000000000000000000000000000000000100010044B262C46CEABB85010000" +
+            "0000000000",
+        },
+      };
+
+      // create QR codes
+      // Create AccountQR from private key
+      const accountQR = new AccountQR(
+        PRIVATE_KEY,
+        NETWORK_TYPE,
+        GENERATION_HASH,
+        PASSWORD
+      );
+      
+      // Create ContactQR from JSON
+      const contactQR = ContactQR.fromJSON(
+        JSON.stringify(contactInfo)
+      );
+      
+      // Create MnemonicQR from mnemonic phrase
+      const mnemonicQR = new MnemonicQR(
+        MNEMONIC_PHRASE,
+        NETWORK_TYPE,
+        GENERATION_HASH,
+        PASSWORD
+      );
+      
+      // // Create TransactionQR from JSON
+      // const transactionQR = TransactionQR.fromJSON(
+      //   JSON.stringify(transactionInfo)
+      // );
+
+      window.addEventListener("DOMContentLoaded", function () {
+        (async function () {
+          try {
+            // AccountQR Sample
+            const constructorCallCode = `<script src="../dist/symbol-qr-library-esm.umd.js"><\/script>
+<script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"><\/script>
 <script>
-const QRCodeType = CatapultQR.QRCodeType;
-const ContactQR = CatapultQR.ContactQR;
-const AccountQR = CatapultQR.AccountQR;
-const MnemonicQR = CatapultQR.MnemonicQR;
-const TransactionQR = CatapultQR.TransactionQR;
-
-// ContactQR created from JSON
-const contactInfo = {
-    v: 3,
-    type: QRCodeType.AddContact,
-    network_id: 144,
-    chain_id: 'no-chain-id',
-    data: {
-        name: 'nemtech',
-        publicKey: 'D90ABF5BADC4E709E79E8F168F1629CD90D7F5B41010B7C0616C2121D516C11C'
-    }
-};
-
-// AccountQR created from JSON
-const accountInfo = {
-    v: 3,
-    type: QRCodeType.ExportAccount,
-    network_id: 144,
-    chain_id: "9F1979BEBA29C47E59B40393ABB516801A353CFC0C18BC241FEDE41939C907E7",
-    data: {
-        ciphertext: "a89541dbaa98ef9e9e498cd76ff46461bI3kQgjmHUgFRd5ySLf8D9VDJCFSIvZ8xJwcnG/kRrrdqP1Y7Fc20C0xOWOHmAloKyn066FidX5QCtFQgqf1NChsJH2t3qXaxXB1h36voqU=","salt":"cc53aeba6dab2f3d93fe080cb548a2353fa24a792e958f612dbb98eb5528471c"
-    }
-};
-
-// MnemonicQR created from JSON
-const mnemonicInfo = {
-    v: 3,
-    type: QRCodeType.ExportMnemonic,
-    network_id: 144,
-    chain_id: "9F1979BEBA29C47E59B40393ABB516801A353CFC0C18BC241FEDE41939C907E7",
-    data: {
-        ciphertext: "a580e9cf65d22127626e44c3a2221487VRLN341zEoEHWBK381Xqkzhbt1L+CHfKpvsyYF+2N2CBFJJrZvA6+b5unxafklV0xHOaymakrAemfPAnQYfgsGMC5uyMaYTOS+cwQqDJ3+QAegaOh9CMV6A5ww5D2hE6OF6szbbOe7l6fSVrboFgMGXEuoO1jN5jkPnIN0MqeFgO0R62er2PkuHw4tiu5+kp33nnvwO7XwhQV7mVnNUOiw==","salt":"d2c6a1af61ff37fd9e699646ae279de5419e71efa820f2486d8055aaafa24503"
-    }
-};
-
-// TransactionQR created from JSON
-const transactionInfo = {
-    v: 3,
-    type: 3,
-    network_id: 144,
-    chain_id: "9F1979BEBA29C47E59B40393ABB516801A353CFC0C18BC241FEDE41939C907E7",
-    data: {
-        payload: "A500000000000000000000000000000000000000000000000000000000000000"
-               + "0000000000000000000000000000000000000000000000000000000000000000"
-               + "0000000000000000000000000000000000000000000000000000000000000000"
-               + "000000000190544100000000000000008CDC693819000000912C7BC6007CB8AC"
-               + "B8000000000000000000000000000000000100010044B262C46CEABB85010000"
-               + "0000000000"
-    }
-}
-
-// create QR codes
-const contactQR = ContactQR.fromJSON(JSON.stringify(contactInfo));
-const accountQR = AccountQR.fromJSON(JSON.stringify(accountInfo), 'password');
-const mnemonicQR = MnemonicQR.fromJSON(JSON.stringify(mnemonicInfo), 'password');
-const transactionQR = TransactionQR.fromJSON(JSON.stringify(transactionInfo));
-
-window.addEventListener('DOMContentLoaded', function() {
-    (async function() {
-        const contact_base64 = await contactQR.toBase64().toPromise();
-        const account_base64 = await accountQR.toBase64().toPromise();
-        const mnemonic_base64 = await mnemonicQR.toBase64().toPromise();
-        const transaction_base64 = await transactionQR.toBase64().toPromise();
-        document.getElementById("qr-code-contact").setAttribute('src', contact_base64);
-        document.getElementById("qr-code-account").setAttribute('src', account_base64);
-        document.getElementById("qr-code-mnemonic").setAttribute('src', mnemonic_base64);
-        document.getElementById("qr-code-transaction").setAttribute('src', transaction_base64);
-    })();
+  const accountImg = document.getElementById("qr-code-account");
+const accountQR = new AccountQR(
+  // private key
+  "${PRIVATE_KEY}",
+  // network type(mainnet)
+  ${NETWORK_TYPE},
+  // generation hash(mainnet)
+  "${GENERATION_HASH}",
+  // password
+  "${PASSWORD}"
+);
+const accountJSON = accountQR.toJSON();
+const qr = new QRious({
+  value: accountJSON,
+  size: 250,
 });
-</script>
+accountImg.src = qr.toDataURL();
+<\/script>`;
+            document.getElementById("constructor-call").value = constructorCallCode;
 
-        <div id="examples-wrapper">
-            <div class="example" rel="contact">
-                <p style="vertical-align: middle;">
-                    <span>ContactQR: </span>
-                    <img src=""
-                        width="250px"
-                        height="250px"
-                        id="qr-code-contact" />
-                </p>
-            </div>
-            <div class="example" rel="account">
-                <p style="vertical-align: middle;">
-                    <span>AccountQR: </span>
-                    <img src=""
-                        width="250px"
-                        height="250px"
-                        id="qr-code-account" />
-                </p>
-            </div>
-            <div class="example" rel="mnemonic">
-                <p style="vertical-align: middle;">
-                    <span>MnemonicQR: </span>
-                    <img src=""
-                        width="250px"
-                        height="250px"
-                        id="qr-code-mnemonic" />
-                </p>
-            </div>
-            <div class="example" rel="transaction">
-                <p style="vertical-align: middle;">
-                    <span>TransactionQR: </span>
-                    <img src=""
-                        width="250px"
-                        height="250px"
-                        id="qr-code-transaction" />
-                </p>
-            </div>
-        </div>
-	</body>
+            // Generate and display JSON
+            const accountJSON = accountQR.toJSON();
+            console.log("Generated JSON type:", typeof accountJSON);
+            console.log("Generated JSON:", accountJSON);
+            
+            // Format JSON for display
+            const formattedJSON = JSON.stringify(JSON.parse(accountJSON), null, 2);
+            document.getElementById("account-json").value = formattedJSON;
+
+            // Generate QR code
+            const accountImg = document.getElementById("qr-code-account");
+            const qr = new QRious({
+              value: accountJSON,
+              size: 250,
+            });
+            accountImg.src = qr.toDataURL();
+
+            console.log("AccountQR sample completed successfully");
+
+            // ContactQR Sample
+            const contactConstructorCode = `<script src="../dist/symbol-qr-library-esm.umd.js"><\/script>
+<script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"><\/script>
+<script>
+  const contactImg = document.getElementById("qr-code-contact");
+const contactInfo = {
+  v: 3,
+  type: QRCodeType.AddContact,
+  network_id: 104,
+  chain_id: "no-chain-id",
+  data: {
+    name: "nemtech",
+    publicKey: "D90ABF5BADC4E709E79E8F168F1629CD90D7F5B41010B7C0616C2121D516C11C",
+  },
+};
+const contactQR = ContactQR.fromJSON(JSON.stringify(contactInfo));
+const contactJSON = contactQR.toJSON();
+const qr = new QRious({
+  value: contactJSON,
+  size: 250,
+});
+contactImg.src = qr.toDataURL();
+<\/script>`;
+            document.getElementById("contact-constructor-call").value = contactConstructorCode;
+
+            const contactJSON = contactQR.toJSON();
+            const formattedContactJSON = JSON.stringify(JSON.parse(contactJSON), null, 2);
+            document.getElementById("contact-json").value = formattedContactJSON;
+
+            const contactImg = document.getElementById("qr-code-contact");
+            const contactQRCode = new QRious({
+              value: contactJSON,
+              size: 250,
+            });
+            contactImg.src = contactQRCode.toDataURL();
+
+            console.log("ContactQR sample completed successfully");
+
+            // MnemonicQR Sample
+            const mnemonicConstructorCode = `<script src="../dist/symbol-qr-library-esm.umd.js"><\/script>
+<script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"><\/script>
+<script>
+  const mnemonicImg = document.getElementById("qr-code-mnemonic");
+const mnemonicQR = new MnemonicQR(
+  // mnemonic phrase (12 words)
+  "${MNEMONIC_PHRASE}",
+  // network type(mainnet)
+  ${NETWORK_TYPE},
+  // generation hash(mainnet)
+  "${GENERATION_HASH}",
+  // password
+  "${PASSWORD}"
+);
+const mnemonicJSON = mnemonicQR.toJSON();
+const qr = new QRious({
+  value: mnemonicJSON,
+  size: 250,
+});
+mnemonicImg.src = qr.toDataURL();
+<\/script>`;
+            document.getElementById("mnemonic-constructor-call").value = mnemonicConstructorCode;
+
+            const mnemonicJSON = mnemonicQR.toJSON();
+            const formattedMnemonicJSON = JSON.stringify(JSON.parse(mnemonicJSON), null, 2);
+            document.getElementById("mnemonic-json").value = formattedMnemonicJSON;
+
+            const mnemonicImg = document.getElementById("qr-code-mnemonic");
+            const mnemonicQRCode = new QRious({
+              value: mnemonicJSON,
+              size: 250,
+            });
+            mnemonicImg.src = mnemonicQRCode.toDataURL();
+
+            console.log("MnemonicQR sample completed successfully");
+
+//             // TransactionQR Sample
+//             const transactionConstructorCode = `<script src="../dist/symbol-qr-library-esm.umd.js"><\/script>
+// <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"><\/script>
+// <script>
+//   const transactionImg = document.getElementById("qr-code-transaction");
+// const transactionInfo = {
+//   v: 3,
+//   type: 3,
+//   network_id: 104,
+//   chain_id: "57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6",
+//   data: {
+//     payload: "A500000000000000000000000000000000000000000000000000000000000000" +
+//              "0000000000000000000000000000000000000000000000000000000000000000" +
+//              "0000000000000000000000000000000000000000000000000000000000000000" +
+//              "000000000190544100000000000000008CDC693819000000912C7BC6007CB8AC" +
+//              "B8000000000000000000000000000000000100010044B262C46CEABB85010000" +
+//              "0000000000",
+//   },
+// };
+// const transactionQR = TransactionQR.fromJSON(JSON.stringify(transactionInfo));
+// const transactionJSON = transactionQR.toJSON();
+// const qr = new QRious({
+//   value: transactionJSON,
+//   size: 250,
+// });
+// transactionImg.src = qr.toDataURL();
+// <\/script>`;
+//             document.getElementById("transaction-constructor-call").value = transactionConstructorCode;
+
+//             const transactionJSON = transactionQR.toJSON();
+//             const formattedTransactionJSON = JSON.stringify(JSON.parse(transactionJSON), null, 2);
+//             document.getElementById("transaction-json").value = formattedTransactionJSON;
+
+//             const transactionImg = document.getElementById("qr-code-transaction");
+//             const transactionQRCode = new QRious({
+//               value: transactionJSON,
+//               size: 250,
+//             });
+//             transactionImg.src = transactionQRCode.toDataURL();
+
+//             console.log("TransactionQR sample completed successfully");
+
+          } catch (error) {
+            console.error("Error generating QR samples:", error);
+          }
+        })();
+      });
+    </script>
+
+    <div id="examples-wrapper">
+      <div class="example" rel="contact">
+        <h3>ContactQR Sample</h3>
+        
+        <h4>Constructor Call:</h4>
+        <textarea id="contact-constructor-call" rows="20" cols="80" readonly></textarea>
+        
+        <h4>Generated JSON:</h4>
+        <textarea id="contact-json" rows="12" cols="80" readonly></textarea>
+        
+        <h4>QR Code:</h4>
+        <p style="vertical-align: middle">
+          <img id="qr-code-contact" width="250" height="250"></img>
+        </p>
+      </div>
+
+      <div class="example" rel="account">
+        <h3>AccountQR Sample</h3>
+        
+        <h4>Constructor Call:</h4>
+        <textarea id="constructor-call" rows="22" cols="80" readonly></textarea>
+        
+        <h4>Generated JSON:</h4>
+        <textarea id="account-json" rows="12" cols="80" readonly></textarea>
+        
+        <h4>QR Code:</h4>
+        <p style="vertical-align: middle">
+          <img id="qr-code-account" width="250" height="250"></img>
+        </p>
+      </div>
+
+      <div class="example" rel="mnemonic">
+        <h3>MnemonicQR Sample</h3>
+        
+        <h4>Constructor Call:</h4>
+        <textarea id="mnemonic-constructor-call" rows="18" cols="80" readonly></textarea>
+        
+        <h4>Generated JSON:</h4>
+        <textarea id="mnemonic-json" rows="12" cols="80" readonly></textarea>
+        
+        <h4>QR Code:</h4>
+        <p style="vertical-align: middle">
+          <img id="qr-code-mnemonic" width="250" height="250"></img>
+        </p>
+      </div>
+
+      <div class="example" rel="transaction">
+        <h3>TransactionQR Sample</h3>
+        
+        <h4>Constructor Call:</h4>
+        <textarea id="transaction-constructor-call" rows="22" cols="80" readonly></textarea>
+        
+        <h4>Generated JSON:</h4>
+        <textarea id="transaction-json" rows="12" cols="80" readonly></textarea>
+        
+        <h4>QR Code:</h4>
+        <p style="vertical-align: middle">
+          <img id="qr-code-transaction" width="250" height="250"></img>
+        </p>
+      </div>
+    </div>
+  </body>
 </html>

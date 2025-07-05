@@ -1,7 +1,7 @@
 {
-  "name": "symbol-qr-library-esm",
+  "name": "symbol-qr-library-lite",
   "version": "1.0.0",
-  "description": "Symbol library to generate QR Code data (ESM version)",
+  "description": "Symbol library to generate QR Code data (Lite edition)",
   "type": "module",
   "main": "dist/index.cjs.js",
   "module": "dist/index.js",
@@ -20,7 +20,7 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "crypto-js": "^4.2.0"
+    "crypto-js": "4.1.1"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.6",
