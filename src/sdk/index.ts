@@ -14,5 +14,5 @@
  * limitations under the License.
  */
 
-export type { INetworkType } from "./INetworkType";
-export type { ITransaction } from "./ITransaction";
+export type { INetworkType } from './INetworkType';
+export type { ITransaction } from './ITransaction';

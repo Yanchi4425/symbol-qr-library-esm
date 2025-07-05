@@ -17,4 +17,4 @@
 /**
  * An alias of the symbol's network type.
  */
-export type INetworkType = number
+export type INetworkType = number;

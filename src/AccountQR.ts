@@ -21,8 +21,8 @@ import {
   QRCodeDataSchema,
   QRCodeInterface,
   QRCodeType,
-} from "../index";
-import { INetworkType } from "./sdk/INetworkType";
+} from '../index';
+import { INetworkType } from './sdk/INetworkType';
 
 class AccountQR extends QRCode implements QRCodeInterface {
   /**

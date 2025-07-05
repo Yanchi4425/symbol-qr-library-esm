@@ -20,11 +20,11 @@ import {
   QRCodeDataSchema,
   QRCodeType,
   TransactionQR,
-} from "../../index";
+} from '../../index';
 // Note: SignedTransaction import removed to avoid external dependency
 // The ISignedTransaction interface is used instead
-import { SignedTransactionQR } from "../SignedTransactionQR";
-import { ISignedTransaction } from "../sdk/ISignedTransaction";
+import { SignedTransactionQR } from '../SignedTransactionQR';
+import { ISignedTransaction } from '../sdk/ISignedTransaction';
 
 /**
  * Class `SignedTransactionDataSchema` describes a transaction
@@ -69,12 +69,12 @@ class SignedTransactionDataSchema extends QRCodeDataSchema {
     transactionCreateFromPayload: (payload: string) => ISignedTransaction
   ): SignedTransactionQR {
     if (!json.length) {
-      throw Error("JSON argument cannot be empty.");
+      throw Error('JSON argument cannot be empty.');
     }
 
     const jsonObj = JSON.parse(json);
     if (!jsonObj.type || jsonObj.type !== QRCodeType.SignedTransaction) {
-      throw Error("Invalid type field value for SignedTransactionQR.");
+      throw Error('Invalid type field value for SignedTransactionQR.');
     }
 
     // read contact data

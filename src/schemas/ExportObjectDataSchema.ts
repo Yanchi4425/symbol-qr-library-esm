@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 // internal dependencies
-import {
-    ObjectQR,
-    QRCodeDataSchema,
-    QRCodeType,
-} from '../../index';
+import { ObjectQR, QRCodeDataSchema, QRCodeType } from '../../index';
 
 /**
  * Class `ExportObjectDataSchema` describes an export
@@ -27,52 +23,48 @@ import {
  * @since 0.3.0
  */
 class ExportObjectDataSchema extends QRCodeDataSchema {
+  constructor() {
+    super();
+  }
 
-    constructor() {
-        super();
+  /**
+   * The `getData()` method returns an object
+   * that will be stored in the `data` field of
+   * the underlying QR Code JSON content.
+   *
+   * @return {any}
+   */
+  public getData(qr: ObjectQR): any {
+    return qr.object;
+  }
+
+  /**
+   * Parse a JSON QR code content into a ObjectQR
+   * object.
+   *
+   * @param   json    {string}
+   * @return  {ObjectQR}
+   * @throws  {Error}     On empty `json` given.
+   * @throws  {Error}     On missing `type` field value.
+   * @throws  {Error}     On unrecognized QR code `type` field value.
+   */
+  public static parse(json: string): ObjectQR {
+    if (!json.length) {
+      throw Error('JSON argument cannot be empty.');
     }
 
-    /**
-     * The `getData()` method returns an object
-     * that will be stored in the `data` field of
-     * the underlying QR Code JSON content.
-     *
-     * @return {any}
-     */
-    public getData(qr: ObjectQR): any {
-
-        return qr.object;
+    const jsonObj = JSON.parse(json);
+    if (!jsonObj.type || jsonObj.type !== QRCodeType.ExportObject) {
+      throw Error('Invalid type field value for ObjectQR.');
     }
 
-    /**
-     * Parse a JSON QR code content into a ObjectQR
-     * object.
-     *
-     * @param   json    {string}
-     * @return  {ObjectQR}
-     * @throws  {Error}     On empty `json` given.
-     * @throws  {Error}     On missing `type` field value.
-     * @throws  {Error}     On unrecognized QR code `type` field value.
-     */
-    public static parse(
-        json: string,
-    ): ObjectQR {
-        if (! json.length) {
-            throw Error('JSON argument cannot be empty.');
-        }
+    // read contact data
+    const obj = jsonObj.data;
+    const network = jsonObj.network_id;
+    const generationHash = jsonObj.chain_id;
 
-        const jsonObj = JSON.parse(json);
-        if (!jsonObj.type || jsonObj.type !== QRCodeType.ExportObject) {
-            throw Error('Invalid type field value for ObjectQR.');
-        }
-
-        // read contact data
-        const obj = jsonObj.data;
-        const network = jsonObj.network_id;
-        const generationHash = jsonObj.chain_id;
-
-        return new ObjectQR(obj, network, generationHash);
-    }
+    return new ObjectQR(obj, network, generationHash);
+  }
 }
 
-export {ExportObjectDataSchema};
+export { ExportObjectDataSchema };

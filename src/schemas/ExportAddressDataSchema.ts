@@ -15,11 +15,8 @@
  */
 
 // internal dependencies
-import {
-    QRCodeDataSchema,
-    QRCodeType,
-} from '../../index';
-import {AddressQR} from "../AddressQR";
+import { QRCodeDataSchema, QRCodeType } from '../../index';
+import { AddressQR } from '../AddressQR';
 
 /**
  * Class `ExportAddressDataSchema` describes a contact
@@ -28,54 +25,51 @@ import {AddressQR} from "../AddressQR";
  * @since 0.3.0
  */
 class ExportAddressDataSchema extends QRCodeDataSchema {
+  constructor() {
+    super();
+  }
 
-    constructor() {
-        super();
+  /**
+   * The `getData()` method returns an object
+   * that will be stored in the `data` field of
+   * the underlying QR Code JSON content.
+   *
+   * @return {any}
+   */
+  public getData(qr: AddressQR): any {
+    return {
+      name: qr.name,
+      address: qr.accountAddress,
+    };
+  }
+
+  /**
+   * Parse a JSON QR code content into a ContactQR
+   * object.
+   *
+   * @param   json    {string}
+   * @return  {AddressQR}
+   * @throws  {Error}     On empty `json` given.
+   * @throws  {Error}     On missing `type` field value.
+   * @throws  {Error}     On unrecognized QR code `type` field value.
+   */
+  public static parse(json: string): AddressQR {
+    if (!json.length) {
+      throw Error('JSON argument cannot be empty.');
     }
 
-    /**
-     * The `getData()` method returns an object
-     * that will be stored in the `data` field of
-     * the underlying QR Code JSON content.
-     *
-     * @return {any}
-     */
-    public getData(qr: AddressQR): any {
-        return {
-            "name": qr.name,
-            "address": qr.accountAddress,
-        };
+    const jsonObj = JSON.parse(json);
+    if (!jsonObj.type || jsonObj.type !== QRCodeType.ExportAddress) {
+      throw Error('Invalid type field value for AddressQR.');
     }
 
-    /**
-     * Parse a JSON QR code content into a ContactQR
-     * object.
-     *
-     * @param   json    {string}
-     * @return  {AddressQR}
-     * @throws  {Error}     On empty `json` given.
-     * @throws  {Error}     On missing `type` field value.
-     * @throws  {Error}     On unrecognized QR code `type` field value.
-     */
-    public static parse(
-        json: string,
-    ): AddressQR {
-        if (! json.length) {
-            throw Error('JSON argument cannot be empty.');
-        }
+    // read contact data
+    const name = jsonObj.data.name;
+    const network = jsonObj.network_id;
+    const generationHash = jsonObj.chain_id;
 
-        const jsonObj = JSON.parse(json);
-        if (!jsonObj.type ||jsonObj.type !== QRCodeType.ExportAddress) {
-            throw Error('Invalid type field value for AddressQR.');
-        }
-
-        // read contact data
-        const name = jsonObj.data.name;
-        const network = jsonObj.network_id;
-        const generationHash = jsonObj.chain_id;
-
-        return new AddressQR(name, jsonObj.data.address, network, generationHash);
-    }
+    return new AddressQR(name, jsonObj.data.address, network, generationHash);
+  }
 }
 
-export {ExportAddressDataSchema};
+export { ExportAddressDataSchema };

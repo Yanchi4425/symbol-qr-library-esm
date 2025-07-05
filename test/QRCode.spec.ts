@@ -13,97 +13,101 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {expect} from "chai";
-import {
-    NetworkType,
-} from 'symbol-sdk';
+import { expect } from 'chai';
+import { NetworkType } from 'symbol-sdk';
 
 // internal dependencies
 import {
-    QRCodeInterface,
-    QRCode,
-    QRCodeType,
-    QRCodeDataSchema,
-    ExportObjectDataSchema,
-} from "../index";
+  QRCodeInterface,
+  QRCode,
+  QRCodeType,
+  QRCodeDataSchema,
+  ExportObjectDataSchema,
+} from '../index';
 
 /// region Mock for QRCode specialization
 // extend abstract class for tests
 class FakeQR extends QRCode implements QRCodeInterface {
-    constructor(
-        public readonly object: any,
-        public readonly networkType: NetworkType,
-        public readonly generationHash: string) {
-        super(QRCodeType.ExportObject, networkType, generationHash);
-    }
+  constructor(
+    public readonly object: any,
+    public readonly networkType: NetworkType,
+    public readonly generationHash: string
+  ) {
+    super(QRCodeType.ExportObject, networkType, generationHash);
+  }
 
-    public getSchema(): QRCodeDataSchema {
-        return new ExportObjectDataSchema();
-    }
+  public getSchema(): QRCodeDataSchema {
+    return new ExportObjectDataSchema();
+  }
 
-    public getTypeNumber(): number {
-        return 10;
-    }
+  public getTypeNumber(): number {
+    return 10;
+  }
 }
 /// end-region Mock for QRCode specialization
 
 describe('QRCode -->', () => {
+  describe('toBase64() should', () => {
+    it('create same Base64 given same objects', async () => {
+      // Arrange:
+      const object1 = { test1: 'test1' };
+      const object2 = { test1: 'test1' };
 
-    describe('toBase64() should', () => {
+      // Act:
+      const fakeQR1 = new FakeQR(object1, NetworkType.TEST_NET, 'no-chain-id');
+      const fakeQR2 = new FakeQR(object2, NetworkType.TEST_NET, 'no-chain-id');
 
-        it('create same Base64 given same objects', async () => {
-            // Arrange:
-            const object1 = {"test1": "test1"};
-            const object2 = {"test1": "test1"};
-
-            // Act:
-            const fakeQR1 = new FakeQR(object1, NetworkType.TEST_NET, 'no-chain-id');
-            const fakeQR2 = new FakeQR(object2, NetworkType.TEST_NET, 'no-chain-id');
-
-            // Assert:
-            expect(await fakeQR1.toBase64().toPromise()).to.be.equal(await fakeQR2.toBase64().toPromise());
-        });
-
-        it('create different Base64 given different objects', async () => {
-            // Arrange:
-            const object1 = {"test1": "test1"};
-            const object2 = {"test2": "test2"};
-
-            // Act:
-            const fakeQR1 = new FakeQR(object1, NetworkType.TEST_NET, 'no-chain-id');
-            const fakeQR2 = new FakeQR(object2, NetworkType.TEST_NET, 'no-chain-id');
-
-            // Assert:
-            expect(await fakeQR1.toBase64().toPromise()).to.not.be.equal(await fakeQR2.toBase64().toPromise());
-        });
+      // Assert:
+      expect(await fakeQR1.toBase64().toPromise()).to.be.equal(
+        await fakeQR2.toBase64().toPromise()
+      );
     });
 
-    describe('toString() should', () => {
+    it('create different Base64 given different objects', async () => {
+      // Arrange:
+      const object1 = { test1: 'test1' };
+      const object2 = { test2: 'test2' };
 
-        it('create same string given same objects', async () => {
-            // Arrange:
-            const object1 = {"test1": "test1"};
-            const object2 = {"test1": "test1"};
+      // Act:
+      const fakeQR1 = new FakeQR(object1, NetworkType.TEST_NET, 'no-chain-id');
+      const fakeQR2 = new FakeQR(object2, NetworkType.TEST_NET, 'no-chain-id');
 
-            // Act:
-            const fakeQR1 = new FakeQR(object1, NetworkType.TEST_NET, 'no-chain-id');
-            const fakeQR2 = new FakeQR(object2, NetworkType.TEST_NET, 'no-chain-id');
-
-            // Assert:
-            expect(await fakeQR1.toString().toPromise()).to.be.equal(await fakeQR2.toString().toPromise());
-        });
-
-        it('create different string given different objects', async () => {
-            // Arrange:
-            const object1 = {"test1": "test1"};
-            const object2 = {"test2": "test2"};
-
-            // Act:
-            const fakeQR1 = new FakeQR(object1, NetworkType.TEST_NET, 'no-chain-id');
-            const fakeQR2 = new FakeQR(object2, NetworkType.TEST_NET, 'no-chain-id');
-
-            // Assert:
-            expect(await fakeQR1.toString().toPromise()).to.not.be.equal(await fakeQR2.toString().toPromise());
-        });
+      // Assert:
+      expect(await fakeQR1.toBase64().toPromise()).to.not.be.equal(
+        await fakeQR2.toBase64().toPromise()
+      );
     });
+  });
+
+  describe('toString() should', () => {
+    it('create same string given same objects', async () => {
+      // Arrange:
+      const object1 = { test1: 'test1' };
+      const object2 = { test1: 'test1' };
+
+      // Act:
+      const fakeQR1 = new FakeQR(object1, NetworkType.TEST_NET, 'no-chain-id');
+      const fakeQR2 = new FakeQR(object2, NetworkType.TEST_NET, 'no-chain-id');
+
+      // Assert:
+      expect(await fakeQR1.toString().toPromise()).to.be.equal(
+        await fakeQR2.toString().toPromise()
+      );
+    });
+
+    it('create different string given different objects', async () => {
+      // Arrange:
+      const object1 = { test1: 'test1' };
+      const object2 = { test2: 'test2' };
+
+      // Act:
+      const fakeQR1 = new FakeQR(object1, NetworkType.TEST_NET, 'no-chain-id');
+      const fakeQR2 = new FakeQR(object2, NetworkType.TEST_NET, 'no-chain-id');
+
+      // Assert:
+      expect(await fakeQR1.toString().toPromise()).to.not.be.equal(
+        await fakeQR2.toString().toPromise()
+      );
+    });
+  });
 });

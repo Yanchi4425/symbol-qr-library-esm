@@ -16,10 +16,10 @@
 
 // internal dependencies
 import {
-    ITransaction,
-    QRCodeDataSchema,
-    QRCodeType,
-    TransactionQR,
+  ITransaction,
+  QRCodeDataSchema,
+  QRCodeType,
+  TransactionQR,
 } from '../../index';
 
 /**
@@ -29,59 +29,57 @@ import {
  * @since 0.3.0
  */
 class RequestTransactionDataSchema extends QRCodeDataSchema {
+  constructor() {
+    super();
+  }
 
-    constructor() {
-        super();
+  /**
+   * The `getData()` method returns an object
+   * that will be stored in the `data` field of
+   * the underlying QR Code JSON content.
+   *
+   * @return {any}
+   */
+  public getData(qr: TransactionQR): any {
+    // serialize the transaction object data.
+    const payload = qr.transaction.serialize();
+
+    return {
+      payload,
+    };
+  }
+
+  /**
+   * Parse a JSON QR code content into a TransactionQR
+   * object.
+   *
+   * @param   json    {string}
+   * @param   transactionCreateFromPayload the transaction parser that creates a transaction from a binary payload.
+   * @return  {TransactionQR}
+   * @throws  {Error}     On empty `json` given.
+   * @throws  {Error}     On missing `type` field value.
+   * @throws  {Error}     On unrecognized QR code `type` field value.
+   */
+  public static parse(
+    json: string,
+    transactionCreateFromPayload: (payload: string) => ITransaction
+  ): TransactionQR {
+    if (!json.length) {
+      throw Error('JSON argument cannot be empty.');
     }
 
-    /**
-     * The `getData()` method returns an object
-     * that will be stored in the `data` field of
-     * the underlying QR Code JSON content.
-     *
-     * @return {any}
-     */
-    public getData(qr: TransactionQR): any {
-
-        // serialize the transaction object data.
-        const payload = qr.transaction.serialize();
-
-        return {
-            payload,
-        };
+    const jsonObj = JSON.parse(json);
+    if (!jsonObj.type || jsonObj.type !== QRCodeType.RequestTransaction) {
+      throw Error('Invalid type field value for TransactionQR.');
     }
 
-    /**
-     * Parse a JSON QR code content into a TransactionQR
-     * object.
-     *
-     * @param   json    {string}
-     * @param   transactionCreateFromPayload the transaction parser that creates a transaction from a binary payload.
-     * @return  {TransactionQR}
-     * @throws  {Error}     On empty `json` given.
-     * @throws  {Error}     On missing `type` field value.
-     * @throws  {Error}     On unrecognized QR code `type` field value.
-     */
-    public static parse(
-        json: string,
-        transactionCreateFromPayload: (payload: string) => ITransaction
-    ): TransactionQR {
-        if (! json.length) {
-            throw Error('JSON argument cannot be empty.');
-        }
+    // read contact data
+    const transaction = transactionCreateFromPayload(jsonObj.data.payload);
+    const network = jsonObj.network_id;
+    const generationHash = jsonObj.chain_id;
 
-        const jsonObj = JSON.parse(json);
-        if (!jsonObj.type || jsonObj.type !== QRCodeType.RequestTransaction) {
-            throw Error('Invalid type field value for TransactionQR.');
-        }
-
-        // read contact data
-        const transaction = transactionCreateFromPayload(jsonObj.data.payload);
-        const network = jsonObj.network_id;
-        const generationHash = jsonObj.chain_id;
-
-        return new TransactionQR(transaction, network, generationHash);
-    }
+    return new TransactionQR(transaction, network, generationHash);
+  }
 }
 
-export {RequestTransactionDataSchema};
+export { RequestTransactionDataSchema };

@@ -22,11 +22,11 @@ import {
   QRCodeInterface,
   QRCodeType,
   RequestTransactionDataSchema,
-} from "../index";
-import { INetworkType } from "./sdk/index";
-import { ExportAddressDataSchema } from "./schemas/ExportAddressDataSchema";
-import { ISignedTransaction } from "./sdk/ISignedTransaction";
-import { SignedTransactionDataSchema } from "./schemas/SignedTransactionDataSchema";
+} from '../index';
+import { INetworkType } from './sdk/index';
+import { ExportAddressDataSchema } from './schemas/ExportAddressDataSchema';
+import { ISignedTransaction } from './sdk/ISignedTransaction';
+import { SignedTransactionDataSchema } from './schemas/SignedTransactionDataSchema';
 
 class SignedTransactionQR extends QRCode implements QRCodeInterface {
   /**

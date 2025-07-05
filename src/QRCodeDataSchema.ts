@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 // internal dependencies
-import {QRCode} from '../index';
+import { QRCode } from '../index';
 
 /**
  * Class `QRCodeDataSchema` describes a QR Code's data
@@ -24,46 +24,44 @@ import {QRCode} from '../index';
  * @since 0.3.0
  */
 abstract class QRCodeDataSchema {
+  /**
+   * The AccountQR QR Code version
+   *
+   * @var {number}
+   */
+  public readonly VERSION = 3;
 
-    /**
-     * The AccountQR QR Code version
-     *
-     * @var {number}
-     */
-    public readonly VERSION = 3;
+  constructor() {}
 
-    constructor() {}
+  /// region Abstract Methods
+  /**
+   * The `getData()` method returns an object
+   * that will be stored in the `data` field of
+   * the underlying QR Code JSON content.
+   *
+   * @return {any}
+   */
+  public abstract getData(qr: QRCode): any;
+  /// end-region Abstract Methods
 
-    /// region Abstract Methods
-    /**
-     * The `getData()` method returns an object
-     * that will be stored in the `data` field of
-     * the underlying QR Code JSON content.
-     *
-     * @return {any}
-     */
-    public abstract getData(qr: QRCode): any;
-    /// end-region Abstract Methods
+  /**
+   * The `toObject()` method returns a JSON object
+   * with required fields.
+   *
+   * @return {any}
+   */
+  public toObject(qr: QRCode): any {
+    // read data from child-classes
+    const data = this.getData(qr);
 
-    /**
-     * The `toObject()` method returns a JSON object
-     * with required fields.
-     *
-     * @return {any}
-     */
-    public toObject(qr: QRCode): any {
-
-        // read data from child-classes
-        const data = this.getData(qr);
-
-        return {
-            "v": this.VERSION,
-            "type": qr.type,
-            "network_id": qr.networkType,
-            "chain_id": qr.generationHash,
-            data,
-        };
-    }
+    return {
+      v: this.VERSION,
+      type: qr.type,
+      network_id: qr.networkType,
+      chain_id: qr.generationHash,
+      data,
+    };
+  }
 }
 
-export {QRCodeDataSchema};
+export { QRCodeDataSchema };

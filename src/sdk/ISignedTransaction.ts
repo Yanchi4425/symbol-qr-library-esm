@@ -18,8 +18,8 @@
  * An abstraction of the sdk's transaction object to avoid the dependency.
  */
 export interface ISignedTransaction {
-    /**
-     * Create DTO object
-     */
-    toDTO(): any;
+  /**
+   * Create DTO object
+   */
+  toDTO(): any;
 }
