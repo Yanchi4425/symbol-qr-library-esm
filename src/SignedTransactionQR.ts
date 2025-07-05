@@ -16,15 +16,12 @@
 
 // internal dependencies
 import {
-  ITransaction,
   QRCode,
   QRCodeDataSchema,
   QRCodeInterface,
   QRCodeType,
-  RequestTransactionDataSchema,
 } from '../index';
 import { INetworkType } from './sdk/index';
-import { ExportAddressDataSchema } from './schemas/ExportAddressDataSchema';
 import { ISignedTransaction } from './sdk/ISignedTransaction';
 import { SignedTransactionDataSchema } from './schemas/SignedTransactionDataSchema';
 

@@ -15,12 +15,7 @@
  */
 
 // internal dependencies
-import {
-  ITransaction,
-  QRCodeDataSchema,
-  QRCodeType,
-  TransactionQR,
-} from '../../index';
+import { QRCodeDataSchema, QRCodeType } from '../../index';
 // Note: SignedTransaction import removed to avoid external dependency
 // The ISignedTransaction interface is used instead
 import { SignedTransactionQR } from '../SignedTransactionQR';

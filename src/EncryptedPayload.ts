@@ -51,11 +51,11 @@ class EncryptedPayload {
     const jsonObject = EncryptedPayload.validateJson(json);
 
     // validate obligatory fields
-    if (!jsonObject.hasOwnProperty('ciphertext')) {
+    if (!Object.hasOwn(jsonObject, 'ciphertext')) {
       throw new Error("Missing mandatory field 'ciphertext'.");
     }
 
-    if (!jsonObject.hasOwnProperty('salt')) {
+    if (!Object.hasOwn(jsonObject, 'salt')) {
       throw new Error("Missing mandatory field 'salt'.");
     }
 
@@ -93,8 +93,8 @@ class EncryptedPayload {
    */
   public static isDataEncrypted(jsonObject: any): boolean {
     return (
-      jsonObject.hasOwnProperty('ciphertext') &&
-      jsonObject.hasOwnProperty('salt')
+      Object.hasOwn(jsonObject, 'ciphertext') &&
+      Object.hasOwn(jsonObject, 'salt')
     );
   }
 }

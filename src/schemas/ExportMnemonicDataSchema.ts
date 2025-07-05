@@ -84,7 +84,7 @@ class ExportMnemonicDataSchema extends QRCodeDataSchema {
       throw new Error('Invalid type field value for MnemonicQR.');
     }
 
-    if (!jsonObj.hasOwnProperty('data')) {
+    if (!Object.hasOwn(jsonObj, 'data')) {
       throw new Error('Missing mandatory property for encrypted payload.');
     }
 
