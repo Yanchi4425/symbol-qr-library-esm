@@ -15,14 +15,14 @@
  */
 
 type CorrectionLevel =
-  | "high"
-  | "quartile"
-  | "medium"
-  | "low"
-  | "H"
-  | "Q"
-  | "M"
-  | "L"
+  | 'high'
+  | 'quartile'
+  | 'medium'
+  | 'low'
+  | 'H'
+  | 'Q'
+  | 'M'
+  | 'L'
   | undefined;
 
 /**
@@ -37,7 +37,7 @@ class QRCodeSettings {
    *
    * @var {CorrectionLevel}
    */
-  public static CORRECTION_LEVEL: CorrectionLevel = "M";
+  public static CORRECTION_LEVEL: CorrectionLevel = 'M';
 
   /**
    * Constructor for QR code settings

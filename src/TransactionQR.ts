@@ -22,8 +22,8 @@ import {
   QRCodeInterface,
   QRCodeType,
   RequestTransactionDataSchema,
-} from "../index";
-import { ITransaction } from "./sdk/index";
+} from '../index';
+import { ITransaction } from './sdk/index';
 
 class TransactionQR extends QRCode implements QRCodeInterface {
   /**

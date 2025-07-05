@@ -21,8 +21,8 @@ import {
   QRCodeDataSchema,
   QRCodeInterface,
   QRCodeType,
-} from "../index";
-import { INetworkType } from "./sdk/index";
+} from '../index';
+import { INetworkType } from './sdk/index';
 
 class MnemonicQR extends QRCode implements QRCodeInterface {
   /**

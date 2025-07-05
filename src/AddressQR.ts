@@ -20,9 +20,9 @@ import {
   QRCodeDataSchema,
   QRCodeInterface,
   QRCodeType,
-} from "../index";
-import { INetworkType } from "./sdk/INetworkType";
-import { ExportAddressDataSchema } from "./schemas/ExportAddressDataSchema";
+} from '../index';
+import { INetworkType } from './sdk/INetworkType';
+import { ExportAddressDataSchema } from './schemas/ExportAddressDataSchema';
 
 class AddressQR extends QRCode implements QRCodeInterface {
   /**

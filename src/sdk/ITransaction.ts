@@ -18,8 +18,8 @@
  * An abstraction of the sdk's transaction object to avoid the dependency.
  */
 export interface ITransaction {
-    /**
-     * It returns the catbuffer binary hex of the transaction.
-     */
-    serialize(): string;
+  /**
+   * It returns the catbuffer binary hex of the transaction.
+   */
+  serialize(): string;
 }

@@ -51,11 +51,11 @@ class EncryptedPayload {
     const jsonObject = EncryptedPayload.validateJson(json);
 
     // validate obligatory fields
-    if (!jsonObject.hasOwnProperty("ciphertext")) {
+    if (!jsonObject.hasOwnProperty('ciphertext')) {
       throw new Error("Missing mandatory field 'ciphertext'.");
     }
 
-    if (!jsonObject.hasOwnProperty("salt")) {
+    if (!jsonObject.hasOwnProperty('salt')) {
       throw new Error("Missing mandatory field 'salt'.");
     }
 
@@ -70,7 +70,7 @@ class EncryptedPayload {
    */
   private static validateJson(json: string) {
     if (!json.length) {
-      throw new Error("JSON argument cannot be empty.");
+      throw new Error('JSON argument cannot be empty.');
     }
 
     // validate JSON
@@ -80,7 +80,7 @@ class EncryptedPayload {
     } catch (e) {
       // Invalid JSON provided, forward error
       throw new Error(
-        "Invalid json body in payload! " +
+        'Invalid json body in payload! ' +
           (e instanceof Error ? e.message : String(e))
       );
     }
@@ -93,8 +93,8 @@ class EncryptedPayload {
    */
   public static isDataEncrypted(jsonObject: any): boolean {
     return (
-      jsonObject.hasOwnProperty("ciphertext") &&
-      jsonObject.hasOwnProperty("salt")
+      jsonObject.hasOwnProperty('ciphertext') &&
+      jsonObject.hasOwnProperty('salt')
     );
   }
 }

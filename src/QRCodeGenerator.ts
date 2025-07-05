@@ -27,9 +27,9 @@ import {
   QRCodeType,
   SignedTransactionQR,
   TransactionQR,
-} from "../index";
-import { INetworkType, ITransaction } from "./sdk/index";
-import { ISignedTransaction } from "./sdk/ISignedTransaction";
+} from '../index';
+import { INetworkType, ITransaction } from './sdk/index';
+import { ISignedTransaction } from './sdk/ISignedTransaction';
 
 /**
  * Class `QRCodeGenerator` describes a NIP-7 compliant QR Code
@@ -187,7 +187,7 @@ class QRCodeGenerator {
     cosignatureSignedTransactionCreateFromPayload?: (payload: string) => any
   ): QRCode {
     if (!json.length) {
-      throw new Error("JSON argument cannot be empty.");
+      throw new Error('JSON argument cannot be empty.');
     }
 
     let jsonObject: any;
@@ -239,7 +239,7 @@ class QRCodeGenerator {
       case QRCodeType.SignedTransaction:
         if (!signedTransactionCreateFromPayload) {
           throw new Error(
-            "signedTransactionCreateFromPayload is required for SignedTransaction QR codes"
+            'signedTransactionCreateFromPayload is required for SignedTransaction QR codes'
           );
         }
         return SignedTransactionQR.fromJSON(
@@ -251,7 +251,7 @@ class QRCodeGenerator {
       case QRCodeType.CosignatureSignedTransaction:
         if (!cosignatureSignedTransactionCreateFromPayload) {
           throw new Error(
-            "cosignatureSignedTransactionCreateFromPayload is required for CosignatureSignedTransaction QR codes"
+            'cosignatureSignedTransactionCreateFromPayload is required for CosignatureSignedTransaction QR codes'
           );
         }
         return CosignatureSignedTransactionQR.fromJSON(

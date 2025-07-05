@@ -13,78 +13,72 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {expect} from "chai";
+import { expect } from 'chai';
 
 // internal dependencies
-import {
-    EncryptionService,
-} from "../../index";
+import { EncryptionService } from '../../index';
 
 describe('EncryptionService -->', () => {
+  describe('encrypt() should', () => {
+    it('should create encrypted payload with salt', () => {
+      // Arrange:
+      const data = 'this will be encrypted.';
+      const pass = 'password';
 
-    describe('encrypt() should', () => {
+      // Act
+      const encrypted = EncryptionService.encrypt(data, pass);
 
-        it('should create encrypted payload with salt', () => {
-            // Arrange:
-            const data = 'this will be encrypted.';
-            const pass = 'password';
-
-            // Act
-            const encrypted = EncryptionService.encrypt(data, pass);
-
-            // Assert
-            expect(encrypted.ciphertext).to.not.be.undefined;
-            expect(encrypted.salt).to.not.be.undefined;
-            expect(encrypted.salt).to.have.lengthOf(64);
-        });
-
-        it('should create correctly sized ciphertext and salt', () => {
-            // Arrange:
-            const data = 'this will be encrypted.';
-            const pass = 'password';
-
-            // Act
-            const encrypted = EncryptionService.encrypt(data, pass);
-
-            // Assert
-            expect(encrypted.ciphertext).to.have.lengthOf(76);
-            expect(encrypted.salt).to.have.lengthOf(64);
-        });
-
-        it('should always create different ciphertext with salt', () => {
-            // Arrange:
-            const data = 'this will be encrypted.';
-            const pass = 'password';
-
-            // Act
-            const encrypted_1 = EncryptionService.encrypt(data, pass);
-            const encrypted_2 = EncryptionService.encrypt(data, pass);
-            const encrypted_3 = EncryptionService.encrypt(data, pass);
-
-            // Assert
-            expect(encrypted_1).to.not.be.equal(encrypted_2);
-            expect(encrypted_1).to.not.be.equal(encrypted_3);
-            expect(encrypted_2).to.not.be.equal(encrypted_3);
-            expect(encrypted_1.salt).to.have.lengthOf(64);
-            expect(encrypted_2.salt).to.have.lengthOf(64);
-            expect(encrypted_3.salt).to.have.lengthOf(64);
-        });
+      // Assert
+      expect(encrypted.ciphertext).to.not.be.undefined;
+      expect(encrypted.salt).to.not.be.undefined;
+      expect(encrypted.salt).to.have.lengthOf(64);
     });
 
-    describe('decrypt() should', () => {
+    it('should create correctly sized ciphertext and salt', () => {
+      // Arrange:
+      const data = 'this will be encrypted.';
+      const pass = 'password';
 
-        it('should decrypt ciphertext correctly', () => {
-            // Arrange:
-            const data = 'this will be encrypted';
-            const pass = 'password';
+      // Act
+      const encrypted = EncryptionService.encrypt(data, pass);
 
-            // Act
-            const encrypted = EncryptionService.encrypt(data, pass);
-            const decrypted = EncryptionService.decrypt(encrypted, pass);
-
-            // Assert
-            expect(decrypted).to.be.equal(data);
-        });
+      // Assert
+      expect(encrypted.ciphertext).to.have.lengthOf(76);
+      expect(encrypted.salt).to.have.lengthOf(64);
     });
 
+    it('should always create different ciphertext with salt', () => {
+      // Arrange:
+      const data = 'this will be encrypted.';
+      const pass = 'password';
+
+      // Act
+      const encrypted_1 = EncryptionService.encrypt(data, pass);
+      const encrypted_2 = EncryptionService.encrypt(data, pass);
+      const encrypted_3 = EncryptionService.encrypt(data, pass);
+
+      // Assert
+      expect(encrypted_1).to.not.be.equal(encrypted_2);
+      expect(encrypted_1).to.not.be.equal(encrypted_3);
+      expect(encrypted_2).to.not.be.equal(encrypted_3);
+      expect(encrypted_1.salt).to.have.lengthOf(64);
+      expect(encrypted_2.salt).to.have.lengthOf(64);
+      expect(encrypted_3.salt).to.have.lengthOf(64);
+    });
+  });
+
+  describe('decrypt() should', () => {
+    it('should decrypt ciphertext correctly', () => {
+      // Arrange:
+      const data = 'this will be encrypted';
+      const pass = 'password';
+
+      // Act
+      const encrypted = EncryptionService.encrypt(data, pass);
+      const decrypted = EncryptionService.decrypt(encrypted, pass);
+
+      // Assert
+      expect(decrypted).to.be.equal(data);
+    });
+  });
 });

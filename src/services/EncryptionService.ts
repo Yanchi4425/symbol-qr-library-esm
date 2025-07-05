@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 // external dependencies
-import * as CryptoJS from "crypto-js";
+import * as CryptoJS from 'crypto-js';
 
 // internal dependencies
-import { EncryptedPayload } from "../../index";
+import { EncryptedPayload } from '../../index';
 
 /**
  * Class `EncryptionService` describes a high level service
@@ -54,7 +54,7 @@ class EncryptionService {
 
     // encrypt with AES
     const encrypted = CryptoJS.AES.encrypt(data, key, {
-      iv: iv,
+      iv,
       padding: CryptoJS.pad.Pkcs7,
       mode: CryptoJS.mode.CBC,
     });
@@ -88,7 +88,7 @@ class EncryptionService {
 
     // decrypt and return
     const decrypted = CryptoJS.AES.decrypt(cipher, key, {
-      iv: iv,
+      iv,
       padding: CryptoJS.pad.Pkcs7,
       mode: CryptoJS.mode.CBC,
     });
@@ -96,7 +96,7 @@ class EncryptionService {
     const decryptedText = decrypted.toString(CryptoJS.enc.Utf8);
     if (!decryptedText) {
       // This happens sometimes when the wrong password is used instead of an Error.
-      throw Error("Empty decrypted text!!");
+      throw Error('Empty decrypted text!!');
     }
     return decryptedText;
   }

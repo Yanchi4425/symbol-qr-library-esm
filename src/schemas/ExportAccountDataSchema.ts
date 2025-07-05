@@ -21,7 +21,7 @@ import {
   EncryptionService,
   QRCodeDataSchema,
   QRCodeType,
-} from "../../index";
+} from '../../index';
 
 /**
  * Class `ExportAccountDataSchema` describes an export
@@ -45,7 +45,7 @@ class ExportAccountDataSchema extends QRCodeDataSchema {
     if (qr.encrypted) {
       // we will store a password encrypted copy of the private key
       if (!qr.password) {
-        throw new Error("Password is required for encrypted account QR codes");
+        throw new Error('Password is required for encrypted account QR codes');
       }
       const encryptedData = EncryptionService.encrypt(
         qr.accountPrivateKey,
@@ -76,16 +76,16 @@ class ExportAccountDataSchema extends QRCodeDataSchema {
    */
   public static parse(json: string, password?: string): AccountQR {
     if (!json.length) {
-      throw new Error("JSON argument cannot be empty.");
+      throw new Error('JSON argument cannot be empty.');
     }
 
     const jsonObj = JSON.parse(json);
     if (!jsonObj.type || jsonObj.type !== QRCodeType.ExportAccount) {
-      throw new Error("Invalid type field value for AccountQR.");
+      throw new Error('Invalid type field value for AccountQR.');
     }
 
-    if (!jsonObj.hasOwnProperty("data")) {
-      throw new Error("Missing mandatory property for payload.");
+    if (!jsonObj.hasOwnProperty('data')) {
+      throw new Error('Missing mandatory property for payload.');
     }
 
     try {
@@ -93,7 +93,7 @@ class ExportAccountDataSchema extends QRCodeDataSchema {
       let privKey: string;
       if (EncryptedPayload.isDataEncrypted(jsonObj.data)) {
         if (!password) {
-          throw new Error("Password is required to decrypt account QR code");
+          throw new Error('Password is required to decrypt account QR code');
         }
         privKey = EncryptionService.decrypt(
           EncryptedPayload.fromJSON(JSON.stringify(jsonObj.data)),
@@ -105,7 +105,7 @@ class ExportAccountDataSchema extends QRCodeDataSchema {
 
       // more content validation
       if (!privKey || (privKey.length !== 64 && privKey.length !== 66)) {
-        throw new Error("Invalid private key.");
+        throw new Error('Invalid private key.');
       }
 
       const network = jsonObj.network_id;
@@ -114,7 +114,7 @@ class ExportAccountDataSchema extends QRCodeDataSchema {
       // create account
       return new AccountQR(privKey, network, generationHash, password);
     } catch (e) {
-      throw new Error("Could not parse account information.");
+      throw new Error('Could not parse account information.');
     }
   }
 }

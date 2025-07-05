@@ -16,12 +16,12 @@
 
 // internal dependencies
 import {
-    ITransaction,
-    QRCodeDataSchema,
-    QRCodeType,
-    TransactionQR,
+  ITransaction,
+  QRCodeDataSchema,
+  QRCodeType,
+  TransactionQR,
 } from '../../index';
-import {CosignatureSignedTransactionQR} from "../CosignatureSignedTransactionQR";
+import { CosignatureSignedTransactionQR } from '../CosignatureSignedTransactionQR';
 
 /**
  * Class `SignedTransactionDataSchema` describes a transaction
@@ -30,55 +30,63 @@ import {CosignatureSignedTransactionQR} from "../CosignatureSignedTransactionQR"
  * @since 0.3.0
  */
 class CosignatureSignedTransactionDataSchema extends QRCodeDataSchema {
+  constructor() {
+    super();
+  }
 
-    constructor() {
-        super();
+  /**
+   * The `getData()` method returns an object
+   * that will be stored in the `data` field of
+   * the underlying QR Code JSON content.
+   *
+   * @return {any}
+   */
+  public getData(qr: CosignatureSignedTransactionQR): any {
+    return {
+      payload: qr.singedTransaction,
+    };
+  }
+
+  /**
+   * Parse a JSON QR code content into a CosignatureSignedTransactionQR
+   * object.
+   *
+   * @param   json    {string}
+   * @param   transactionCreateFromPayload the transaction parser that creates a transaction from a binary payload.
+   * @return  {TransactionQR}
+   * @throws  {Error}     On empty `json` given.
+   * @throws  {Error}     On missing `type` field value.
+   * @throws  {Error}     On unrecognized QR code `type` field value.
+   */
+  public static parse(
+    json: string,
+    transactionCreateFromPayload: (payload: string) => any
+  ): CosignatureSignedTransactionQR {
+    if (!json.length) {
+      throw Error('JSON argument cannot be empty.');
     }
 
-    /**
-     * The `getData()` method returns an object
-     * that will be stored in the `data` field of
-     * the underlying QR Code JSON content.
-     *
-     * @return {any}
-     */
-    public getData(qr: CosignatureSignedTransactionQR): any {
-        return {
-            "payload": qr.singedTransaction,
-        };
+    const jsonObj = JSON.parse(json);
+    if (
+      !jsonObj.type ||
+      jsonObj.type !== QRCodeType.CosignatureSignedTransaction
+    ) {
+      throw Error(
+        'Invalid type field value for CosignatureSignedTransactionQR.'
+      );
     }
 
-    /**
-     * Parse a JSON QR code content into a CosignatureSignedTransactionQR
-     * object.
-     *
-     * @param   json    {string}
-     * @param   transactionCreateFromPayload the transaction parser that creates a transaction from a binary payload.
-     * @return  {TransactionQR}
-     * @throws  {Error}     On empty `json` given.
-     * @throws  {Error}     On missing `type` field value.
-     * @throws  {Error}     On unrecognized QR code `type` field value.
-     */
-    public static parse(
-        json: string,
-        transactionCreateFromPayload: (payload: string) => any
-    ): CosignatureSignedTransactionQR {
-        if (! json.length) {
-            throw Error('JSON argument cannot be empty.');
-        }
+    // read contact data
+    const transaction = transactionCreateFromPayload(jsonObj.data.payload);
+    const network = jsonObj.network_id;
+    const generationHash = jsonObj.chain_id;
 
-        const jsonObj = JSON.parse(json);
-        if (!jsonObj.type || jsonObj.type !== QRCodeType.CosignatureSignedTransaction) {
-            throw Error('Invalid type field value for CosignatureSignedTransactionQR.');
-        }
-
-        // read contact data
-        const transaction = transactionCreateFromPayload(jsonObj.data.payload);
-        const network = jsonObj.network_id;
-        const generationHash = jsonObj.chain_id;
-
-        return new CosignatureSignedTransactionQR(transaction, network, generationHash);
-    }
+    return new CosignatureSignedTransactionQR(
+      transaction,
+      network,
+      generationHash
+    );
+  }
 }
 
-export {CosignatureSignedTransactionDataSchema};
+export { CosignatureSignedTransactionDataSchema };

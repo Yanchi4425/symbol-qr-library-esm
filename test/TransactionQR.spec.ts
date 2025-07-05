@@ -13,74 +13,69 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {expect} from "chai";
+import { expect } from 'chai';
 import {
-    Address,
-    Deadline,
-    Mosaic,
-    NamespaceId,
-    NetworkType,
-    PlainMessage,
-    TransferTransaction,
-    UInt64,
+  Address,
+  Deadline,
+  Mosaic,
+  NamespaceId,
+  NetworkType,
+  PlainMessage,
+  TransferTransaction,
+  UInt64,
 } from 'symbol-sdk';
 
 // internal dependencies
-import {
-    TransactionQR,
-} from "../index";
+import { TransactionQR } from '../index';
 
 describe('TransactionQR -->', () => {
+  describe('toJSON() should', () => {
+    it('include mandatory NIP-7 QR Code base fields', () => {
+      // Arrange:
+      const transfer = TransferTransaction.create(
+        Deadline.create(1),
+        Address.createFromPublicKey(
+          'C5C55181284607954E56CD46DE85F4F3EF4CC713CC2B95000FA741998558D268',
+          NetworkType.TEST_NET
+        ),
+        [new Mosaic(new NamespaceId('symbol.xym'), UInt64.fromUint(10000000))],
+        PlainMessage.create('Welcome to Symbol!'),
+        NetworkType.TEST_NET
+      );
 
-    describe('toJSON() should', () => {
+      // Act:
+      const requestTx = new TransactionQR(transfer, NetworkType.TEST_NET, '');
+      const actualJSON = requestTx.toJSON();
+      const actualObject = JSON.parse(actualJSON);
 
-        it('include mandatory NIP-7 QR Code base fields', () => {
-            // Arrange:
-            const transfer = TransferTransaction.create(
-                Deadline.create(1),
-                Address.createFromPublicKey(
-                    'C5C55181284607954E56CD46DE85F4F3EF4CC713CC2B95000FA741998558D268',
-                    NetworkType.TEST_NET,
-                ),
-                [new Mosaic(new NamespaceId('symbol.xym'), UInt64.fromUint(10000000))],
-                PlainMessage.create('Welcome to Symbol!'),
-                NetworkType.TEST_NET,
-            );
-
-            // Act:
-            const requestTx = new TransactionQR(transfer, NetworkType.TEST_NET, '');
-            const actualJSON = requestTx.toJSON();
-            const actualObject = JSON.parse(actualJSON);
-
-            // Assert:
-            expect(actualObject).to.have.property('v');
-            expect(actualObject).to.have.property('type');
-            expect(actualObject).to.have.property('network_id');
-            expect(actualObject).to.have.property('chain_id');
-            expect(actualObject).to.have.property('data');
-        });
-
-        it('include specialized schema fields', () => {
-            // Arrange:
-            const transfer = TransferTransaction.create(
-                Deadline.create(1),
-                Address.createFromPublicKey(
-                    'C5C55181284607954E56CD46DE85F4F3EF4CC713CC2B95000FA741998558D268',
-                    NetworkType.TEST_NET,
-                ),
-                [new Mosaic(new NamespaceId('symbol.xym'), UInt64.fromUint(10000000))],
-                PlainMessage.create('Welcome to Symbol!'),
-                NetworkType.TEST_NET,
-            );
-
-            // Act:
-            const requestTx = new TransactionQR(transfer, NetworkType.TEST_NET, '');
-            const actualJSON = requestTx.toJSON();
-            const actualObject = JSON.parse(actualJSON);
-
-            // Assert:
-            expect(actualObject.data).to.have.property('payload');
-        });
+      // Assert:
+      expect(actualObject).to.have.property('v');
+      expect(actualObject).to.have.property('type');
+      expect(actualObject).to.have.property('network_id');
+      expect(actualObject).to.have.property('chain_id');
+      expect(actualObject).to.have.property('data');
     });
 
+    it('include specialized schema fields', () => {
+      // Arrange:
+      const transfer = TransferTransaction.create(
+        Deadline.create(1),
+        Address.createFromPublicKey(
+          'C5C55181284607954E56CD46DE85F4F3EF4CC713CC2B95000FA741998558D268',
+          NetworkType.TEST_NET
+        ),
+        [new Mosaic(new NamespaceId('symbol.xym'), UInt64.fromUint(10000000))],
+        PlainMessage.create('Welcome to Symbol!'),
+        NetworkType.TEST_NET
+      );
+
+      // Act:
+      const requestTx = new TransactionQR(transfer, NetworkType.TEST_NET, '');
+      const actualJSON = requestTx.toJSON();
+      const actualObject = JSON.parse(actualJSON);
+
+      // Assert:
+      expect(actualObject.data).to.have.property('payload');
+    });
+  });
 });

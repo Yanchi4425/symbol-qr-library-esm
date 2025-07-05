@@ -1,11 +1,11 @@
-import typescript from "@rollup/plugin-typescript";
-import resolve from "@rollup/plugin-node-resolve";
-import commonjs from "@rollup/plugin-commonjs";
-import dts from "rollup-plugin-dts";
+import typescript from '@rollup/plugin-typescript';
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import dts from 'rollup-plugin-dts';
 
-import { createRequire } from "module";
+import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
-const packageJson = require("./package.json");
+const packageJson = require('./package.json');
 
 // 外部依存関係（バンドルに含めない）
 const external = [
@@ -15,7 +15,7 @@ const external = [
 
 // UMD用の設定（依存関係を含める）
 const umdConfig = {
-  input: "index.ts",
+  input: 'index.ts',
   external: [], // UMDでは外部依存関係を含める
   plugins: [
     resolve({
@@ -24,17 +24,17 @@ const umdConfig = {
     }),
     commonjs(),
     typescript({
-      tsconfig: "./tsconfig.json",
+      tsconfig: './tsconfig.json',
       declaration: false,
       declarationDir: undefined,
-      outDir: "dist",
+      outDir: 'dist',
     }),
   ],
 };
 
 // 共通設定
 const commonConfig = {
-  input: "index.ts",
+  input: 'index.ts',
   external,
   plugins: [
     resolve({
@@ -42,10 +42,10 @@ const commonConfig = {
     }),
     commonjs(),
     typescript({
-      tsconfig: "./tsconfig.json",
+      tsconfig: './tsconfig.json',
       declaration: false, // 型定義は別途生成
       declarationDir: undefined,
-      outDir: "dist",
+      outDir: 'dist',
     }),
   ],
 };
@@ -56,7 +56,7 @@ export default [
     ...commonConfig,
     output: {
       file: packageJson.module,
-      format: "es",
+      format: 'es',
       sourcemap: true,
     },
   },
@@ -65,28 +65,28 @@ export default [
     ...commonConfig,
     output: {
       file: packageJson.main,
-      format: "cjs",
+      format: 'cjs',
       sourcemap: true,
-      exports: "named",
+      exports: 'named',
     },
   },
   // UMD build (ブラウザ用)
   {
     ...umdConfig,
     output: {
-      file: "dist/symbol-qr-library-esm.umd.js",
-      format: "umd",
-      name: "SymbolQR",
+      file: 'dist/symbol-qr-library-esm.umd.js',
+      format: 'umd',
+      name: 'SymbolQR',
       sourcemap: true,
-      exports: "named",
+      exports: 'named',
     },
   },
   // 型定義ファイル生成
   {
-    input: "index.ts",
+    input: 'index.ts',
     output: {
       file: packageJson.types,
-      format: "es",
+      format: 'es',
     },
     plugins: [dts()],
     external: [/\.css$/],

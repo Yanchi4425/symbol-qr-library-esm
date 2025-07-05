@@ -21,8 +21,8 @@ import {
   QRCodeInterface,
   QRCodeData,
   QRCodeType,
-} from "../index";
-import { INetworkType } from "./sdk/INetworkType";
+} from '../index';
+import { INetworkType } from './sdk/INetworkType';
 
 abstract class QRCode implements QRCodeInterface {
   /**
@@ -85,7 +85,7 @@ abstract class QRCode implements QRCodeInterface {
    * @return {CorrectionLevel}
    */
   public getCorrectionLevel(): CorrectionLevel {
-    return "M";
+    return 'M';
   }
 
   /**
@@ -128,19 +128,19 @@ abstract class QRCode implements QRCodeInterface {
   public getDisplayText(): string {
     const data = this.toQRData();
     const typeNames: Record<number, string> = {
-      [QRCodeType.AddContact]: "連絡先追加",
-      [QRCodeType.ExportAccount]: "アカウントエクスポート",
-      [QRCodeType.ExportAddress]: "アドレスエクスポート",
-      [QRCodeType.ExportMnemonic]: "ニーモニックエクスポート",
-      [QRCodeType.ExportObject]: "オブジェクトエクスポート",
-      [QRCodeType.RequestTransaction]: "トランザクション要求",
-      [QRCodeType.RequestCosignature]: "連署要求",
-      [QRCodeType.SignedTransaction]: "署名済みトランザクション",
-      [QRCodeType.CosignatureSignedTransaction]: "連署済みトランザクション",
+      [QRCodeType.AddContact]: '連絡先追加',
+      [QRCodeType.ExportAccount]: 'アカウントエクスポート',
+      [QRCodeType.ExportAddress]: 'アドレスエクスポート',
+      [QRCodeType.ExportMnemonic]: 'ニーモニックエクスポート',
+      [QRCodeType.ExportObject]: 'オブジェクトエクスポート',
+      [QRCodeType.RequestTransaction]: 'トランザクション要求',
+      [QRCodeType.RequestCosignature]: '連署要求',
+      [QRCodeType.SignedTransaction]: '署名済みトランザクション',
+      [QRCodeType.CosignatureSignedTransaction]: '連署済みトランザクション',
     };
 
     const typeName = typeNames[data.type] || `不明なタイプ (${data.type})`;
-    const encrypted = this.encrypted ? " (暗号化)" : "";
+    const encrypted = this.encrypted ? ' (暗号化)' : '';
 
     return `${typeName}${encrypted} - ネットワーク: ${data.network_id}`;
   }

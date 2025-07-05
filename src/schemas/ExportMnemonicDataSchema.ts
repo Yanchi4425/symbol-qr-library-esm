@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { MnemonicPassPhrase } from "symbol-hd-wallets";
+import { MnemonicPassPhrase } from 'symbol-hd-wallets';
 
 // internal dependencies
 import {
@@ -22,7 +22,7 @@ import {
   MnemonicQR,
   QRCodeDataSchema,
   QRCodeType,
-} from "../../index";
+} from '../../index';
 
 /**
  * Class `ExportMnemonicDataSchema` describes an export
@@ -46,7 +46,7 @@ class ExportMnemonicDataSchema extends QRCodeDataSchema {
     if (qr.encrypted) {
       // we will store a password encrypted copy of the mnemonic plain text
       if (!qr.password) {
-        throw new Error("Password is required for encrypted mnemonic QR codes");
+        throw new Error('Password is required for encrypted mnemonic QR codes');
       }
       const encryptedData = EncryptionService.encrypt(
         qr.mnemonicPlainText,
@@ -77,16 +77,16 @@ class ExportMnemonicDataSchema extends QRCodeDataSchema {
    */
   public static parse(json: string, password?: string): MnemonicQR {
     if (!json.length) {
-      throw new Error("JSON argument cannot be empty.");
+      throw new Error('JSON argument cannot be empty.');
     }
 
     const jsonObj = JSON.parse(json);
     if (!jsonObj.type || jsonObj.type !== QRCodeType.ExportMnemonic) {
-      throw new Error("Invalid type field value for MnemonicQR.");
+      throw new Error('Invalid type field value for MnemonicQR.');
     }
 
-    if (!jsonObj.hasOwnProperty("data")) {
-      throw new Error("Missing mandatory property for encrypted payload.");
+    if (!jsonObj.hasOwnProperty('data')) {
+      throw new Error('Missing mandatory property for encrypted payload.');
     }
 
     try {
@@ -94,7 +94,7 @@ class ExportMnemonicDataSchema extends QRCodeDataSchema {
       let plainTxt: string;
       if (EncryptedPayload.isDataEncrypted(jsonObj.data)) {
         if (!password) {
-          throw new Error("Password is required to decrypt mnemonic QR code");
+          throw new Error('Password is required to decrypt mnemonic QR code');
         }
         plainTxt = EncryptionService.decrypt(
           EncryptedPayload.fromJSON(JSON.stringify(jsonObj.data)),
@@ -104,14 +104,14 @@ class ExportMnemonicDataSchema extends QRCodeDataSchema {
         plainTxt = jsonObj.data.plainMnemonic;
       }
       if (!plainTxt) {
-        throw new Error("Mnemonic pass phrase is not valid!");
+        throw new Error('Mnemonic pass phrase is not valid!');
       }
       const network = jsonObj.network_id;
       const generationHash = jsonObj.chain_id;
 
       return new MnemonicQR(plainTxt, network, generationHash, password);
     } catch (e) {
-      throw new Error("Could not parse mnemonic pass phrase.");
+      throw new Error('Could not parse mnemonic pass phrase.');
     }
   }
 }

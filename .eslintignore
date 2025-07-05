@@ -1,0 +1,10 @@
+dist/
+node_modules/
+*.js
+*.cjs
+*.mjs
+rollup.config.js
+coverage/
+.nyc_output/
+*.min.js
+*.bundle.js 
