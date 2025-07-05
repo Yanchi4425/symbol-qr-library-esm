@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { MnemonicPassPhrase } from 'symbol-hd-wallets';
 
 // internal dependencies
 import {
@@ -110,7 +109,7 @@ class ExportMnemonicDataSchema extends QRCodeDataSchema {
       const generationHash = jsonObj.chain_id;
 
       return new MnemonicQR(plainTxt, network, generationHash, password);
-    } catch (e) {
+    } catch {
       throw new Error('Could not parse mnemonic pass phrase.');
     }
   }

@@ -14,18 +14,54 @@
  * limitations under the License.
  */
 import { expect } from 'chai';
-import { MnemonicPassPhrase } from 'symbol-hd-wallets';
-import { NetworkType, Password } from 'symbol-sdk';
+import { NetworkType } from 'symbol-sdk';
 
 // internal dependencies
 import { MnemonicQR, QRCodeType } from '../index';
+
+// Simple mnemonic generator for testing
+function createRandomMnemonic(): { plain: string } {
+  const words = [
+    'abandon',
+    'ability',
+    'able',
+    'about',
+    'above',
+    'absent',
+    'absorb',
+    'abstract',
+    'absurd',
+    'abuse',
+    'access',
+    'accident',
+    'account',
+    'accuse',
+    'achieve',
+    'acid',
+    'acoustic',
+    'acquire',
+    'across',
+    'act',
+    'action',
+    'actor',
+    'actress',
+    'actual',
+  ];
+
+  const selectedWords: string[] = [];
+  for (let i = 0; i < 24; i++) {
+    selectedWords.push(words[Math.floor(Math.random() * words.length)]);
+  }
+
+  return { plain: selectedWords.join(' ') };
+}
 
 describe('MnemonicQR -->', () => {
   describe('with password -->', () => {
     describe('toJSON() should', () => {
       it('include mandatory NIP-7 QR Code base fields', () => {
         // Arrange:
-        const mnemonic = MnemonicPassPhrase.createRandom();
+        const mnemonic = createRandomMnemonic();
 
         // Act:
         const exportMnemonic = new MnemonicQR(
@@ -47,7 +83,7 @@ describe('MnemonicQR -->', () => {
 
       it('include specialized schema fields', () => {
         // Arrange:
-        const mnemonic = MnemonicPassPhrase.createRandom();
+        const mnemonic = createRandomMnemonic();
 
         // Act:
         const exportMnemonic = new MnemonicQR(
@@ -68,7 +104,7 @@ describe('MnemonicQR -->', () => {
     describe('fromJSON() should', () => {
       it('throw error given wrong password', () => {
         // Arrange:
-        const mnemonic = MnemonicPassPhrase.createRandom();
+        const mnemonic = createRandomMnemonic();
 
         // Act:
         const exportMnemonic = new MnemonicQR(
@@ -112,7 +148,7 @@ describe('MnemonicQR -->', () => {
 
       it('reconstruct mnemonic pass phrase given correct password', () => {
         // Arrange:
-        const mnemonic = MnemonicPassPhrase.createRandom();
+        const mnemonic = createRandomMnemonic();
 
         // Act:
         const exportMnemonic = new MnemonicQR(
@@ -168,7 +204,7 @@ describe('MnemonicQR -->', () => {
     describe('toJSON() should', () => {
       it('include mandatory NIP-7 QR Code base fields', () => {
         // Arrange:
-        const mnemonic = MnemonicPassPhrase.createRandom();
+        const mnemonic = createRandomMnemonic();
 
         // Act:
         const exportMnemonic = new MnemonicQR(
@@ -189,7 +225,7 @@ describe('MnemonicQR -->', () => {
 
       it('include specialized schema fields', () => {
         // Arrange:
-        const mnemonic = MnemonicPassPhrase.createRandom();
+        const mnemonic = createRandomMnemonic();
 
         // Act:
         const exportMnemonic = new MnemonicQR(
@@ -208,7 +244,7 @@ describe('MnemonicQR -->', () => {
     describe('fromJSON() should', () => {
       it('not throw error given a password when the qr is not encrypted', () => {
         // Arrange:
-        const mnemonic = MnemonicPassPhrase.createRandom();
+        const mnemonic = createRandomMnemonic();
 
         // Act:
         const exportMnemonic = new MnemonicQR(
@@ -228,7 +264,7 @@ describe('MnemonicQR -->', () => {
 
       it('reconstruct mnemonic pass phrase given a correct plainMnemonic data', () => {
         // Arrange:
-        const mnemonic = MnemonicPassPhrase.createRandom();
+        const mnemonic = createRandomMnemonic();
 
         // Act:
         const exportMnemonic = new MnemonicQR(

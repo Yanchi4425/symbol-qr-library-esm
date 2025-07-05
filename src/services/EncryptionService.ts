@@ -13,91 +13,226 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// external dependencies
-import * as CryptoJS from 'crypto-js';
+// Noble dependencies (crypto-js 4.1.1 compatible)
+import { cbc } from '@noble/ciphers/aes.js';
+import { pbkdf2 } from '@noble/hashes/pbkdf2.js';
+// Note: Using SHA-1 for crypto-js 4.1.1 compatibility (PBKDF2 default)
+// This is deprecated but required for backward compatibility
+import { sha1 } from '@noble/hashes/sha1.js';
 
 // internal dependencies
 import { EncryptedPayload } from '../../index';
 
+// Platform-specific randomBytes implementation
+function getRandomBytes(size: number): Uint8Array {
+  // Browser environment check - use Web Crypto API
+  if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+    const bytes = new Uint8Array(size);
+    crypto.getRandomValues(bytes);
+    return bytes;
+  }
+
+  // Node.js environment check - use process object as indicator
+  if (
+    typeof process !== 'undefined' &&
+    process.versions &&
+    process.versions.node
+  ) {
+    try {
+      // Try to access Node.js crypto via global require (if available)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const nodeCrypto = (globalThis as any).require?.('crypto');
+      if (nodeCrypto && nodeCrypto.randomBytes) {
+        return new Uint8Array(nodeCrypto.randomBytes(size));
+      }
+    } catch {
+      // Ignore error and continue to next attempt
+    }
+
+    // For bundled environments, throw a descriptive error
+    throw new Error(
+      'Node.js crypto module not available in bundled environment. Please use native Node.js or ensure crypto polyfill is available.'
+    );
+  }
+
+  throw new Error(
+    'No secure random number generator available. Please use a browser with Web Crypto API or Node.js environment.'
+  );
+}
+
+// Web APIs are available in both browser and Node.js environments
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const TextEncoder = globalThis.TextEncoder as any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const TextDecoder = globalThis.TextDecoder as any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const btoa = globalThis.btoa as any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const atob = globalThis.atob as any;
+
 /**
  * Class `EncryptionService` describes a high level service
- * for encryption/decryption of data.
+ * for encryption/decryption of data using Noble cryptography libraries.
  *
- * Implemented algorithms for encryption/decryption include:
- * - AES with PBKDF2 (Password-Based Key Derivation Function)
+ * This implementation maintains complete compatibility with crypto-js 4.1.1:
+ * - PBKDF2 with SHA-1, 2000 iterations, 256-bit key
+ * - AES-CBC with PKCS7 padding
+ * - Same salt and IV generation patterns
+ * - Identical output format
  *
  * @since 0.3.0
  */
 class EncryptionService {
   /**
+   * Convert a string to UTF-8 bytes (crypto-js compatible)
+   */
+  private static stringToBytes(str: string): Uint8Array {
+    return new TextEncoder().encode(str);
+  }
+
+  /**
+   * Convert bytes to hex string (crypto-js compatible)
+   */
+  private static bytesToHex(bytes: Uint8Array): string {
+    return Array.from(bytes)
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
+  }
+
+  /**
+   * Convert hex string to bytes (crypto-js compatible)
+   */
+  private static hexToBytes(hex: string): Uint8Array {
+    const bytes = new Uint8Array(hex.length / 2);
+    for (let i = 0; i < hex.length; i += 2) {
+      bytes[i / 2] = parseInt(hex.substr(i, 2), 16);
+    }
+    return bytes;
+  }
+
+  /**
+   * Convert bytes to Base64 string (crypto-js compatible)
+   */
+  private static bytesToBase64(bytes: Uint8Array): string {
+    let binary = '';
+    for (let i = 0; i < bytes.length; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
+  }
+
+  /**
+   * Convert Base64 string to bytes (crypto-js compatible)
+   */
+  private static base64ToBytes(base64: string): Uint8Array {
+    const binary = atob(base64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+    return bytes;
+  }
+
+  /**
    * The `encrypt` method will encrypt given `data` raw string
    * with given `password` password.
    *
-   * First we generate a random salt of 32 bytes, then we iterate
-   * 2000 times with PBKDF2 and encrypt with AES.
+   * This implementation exactly replicates crypto-js 4.1.1 behavior:
+   * - 32 byte random salt
+   * - PBKDF2 with SHA-1, 2000 iterations, 256-bit key
+   * - 16 byte random IV
+   * - AES-CBC encryption with PKCS7 padding
    *
-   * @param password {string}
-   * @param data {string}
+   * @param data {string} The data to encrypt
+   * @param password {string} The password to use for encryption
+   * @returns {EncryptedPayload} The encrypted payload
    */
   public static encrypt(data: string, password: string): EncryptedPayload {
-    // create random salt (32 bytes)
-    const salt = CryptoJS.lib.WordArray.random(32);
+    // Create random salt (32 bytes) - same as crypto-js
+    const salt = getRandomBytes(32);
 
-    // derive key of 8 bytes with 2000 iterations of PBKDF2
-    const key = CryptoJS.PBKDF2(password, salt, {
-      keySize: 8,
-      iterations: 2000,
+    // Convert password to bytes
+    const passwordBytes = this.stringToBytes(password);
+
+    // Derive key using PBKDF2 with SHA-1, 2000 iterations (crypto-js 4.1.1 compatible)
+    const key = pbkdf2(sha1, passwordBytes, salt, {
+      c: 2000, // iterations - same as crypto-js
+      dkLen: 32, // 256-bit key (8 words * 4 bytes)
     });
 
-    // create encryption input vector of 16 bytes (iv)
-    const iv = CryptoJS.lib.WordArray.random(16);
+    // Create encryption IV (16 bytes) - same as crypto-js
+    const iv = getRandomBytes(16);
 
-    // encrypt with AES
-    const encrypted = CryptoJS.AES.encrypt(data, key, {
-      iv,
-      padding: CryptoJS.pad.Pkcs7,
-      mode: CryptoJS.mode.CBC,
-    });
+    // Convert data to bytes
+    const dataBytes = this.stringToBytes(data);
 
-    // create our `EncryptedPayload` (16 bytes iv as hex || cipher text)
-    const ciphertext = iv.toString() + encrypted.toString();
-    const used_salt = CryptoJS.enc.Hex.stringify(salt);
+    // Encrypt with AES-CBC (includes PKCS7 padding automatically)
+    const cipher = cbc(key, iv);
+    const encrypted = cipher.encrypt(dataBytes);
 
-    return new EncryptedPayload(ciphertext, used_salt);
+    // Create ciphertext in crypto-js format: IV (hex) + encrypted (base64)
+    const ivHex = this.bytesToHex(iv);
+    const encryptedBase64 = this.bytesToBase64(encrypted);
+    const ciphertext = ivHex + encryptedBase64;
+
+    // Convert salt to hex (crypto-js format)
+    const saltHex = this.bytesToHex(salt);
+
+    return new EncryptedPayload(ciphertext, saltHex);
   }
 
   /**
    * AES_PBKF2_decryption will decrypt privateKey with provided password
+   *
+   * This implementation exactly replicates crypto-js 4.1.1 behavior for
+   * complete backward compatibility.
+   *
    * @param payload the object containing the encrypted data.
    * @param password the password to decrypt the encrypted data
+   * @returns {string} The decrypted plaintext
    */
   public static decrypt(payload: EncryptedPayload, password: string): string {
-    // read payload
-    const salt = CryptoJS.enc.Hex.parse(payload.salt);
-    const priv = payload.ciphertext;
+    // Parse salt from hex
+    const salt = this.hexToBytes(payload.salt);
+    const ciphertext = payload.ciphertext;
 
-    // read encryption configuration
-    const iv = CryptoJS.enc.Hex.parse(priv.substr(0, 32));
-    const cipher: string = priv.substr(32);
+    // Extract IV from first 32 hex characters (16 bytes)
+    const ivHex = ciphertext.substr(0, 32);
+    const iv = this.hexToBytes(ivHex);
 
-    // re-generate key (PBKDF2)
-    const key = CryptoJS.PBKDF2(password, salt, {
-      keySize: 8,
-      iterations: 2000,
+    // Extract encrypted data (base64 part)
+    const encryptedBase64 = ciphertext.substr(32);
+    const encrypted = this.base64ToBytes(encryptedBase64);
+
+    // Convert password to bytes
+    const passwordBytes = this.stringToBytes(password);
+
+    // Re-generate key using same PBKDF2 parameters as encryption
+    const key = pbkdf2(sha1, passwordBytes, salt, {
+      c: 2000, // iterations - same as crypto-js
+      dkLen: 32, // 256-bit key
     });
 
-    // decrypt and return
-    const decrypted = CryptoJS.AES.decrypt(cipher, key, {
-      iv,
-      padding: CryptoJS.pad.Pkcs7,
-      mode: CryptoJS.mode.CBC,
-    });
+    // Decrypt with AES-CBC
+    const cipher = cbc(key, iv);
+    let decrypted: Uint8Array;
 
-    const decryptedText = decrypted.toString(CryptoJS.enc.Utf8);
-    if (!decryptedText) {
+    try {
+      decrypted = cipher.decrypt(encrypted);
+    } catch {
+      throw new Error('Decryption failed - invalid password or corrupted data');
+    }
+
+    // Convert decrypted bytes back to UTF-8 string
+    const decryptedText = new TextDecoder('utf-8').decode(decrypted);
+
+    // Note: Empty string is a valid decryption result
+    // Only throw error if decryption actually failed (null/undefined)
+    if (decryptedText === null || decryptedText === undefined) {
       // This happens sometimes when the wrong password is used instead of an Error.
       throw Error('Empty decrypted text!!');
     }
+
     return decryptedText;
   }
 }

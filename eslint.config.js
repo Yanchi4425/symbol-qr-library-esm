@@ -22,6 +22,8 @@ export default [
         __dirname: 'readonly',
         __filename: 'readonly',
         global: 'readonly',
+        require: 'readonly',
+        crypto: 'readonly',
       },
     },
     plugins: {
@@ -65,6 +67,8 @@ export default [
         __dirname: 'readonly',
         __filename: 'readonly',
         global: 'readonly',
+        require: 'readonly',
+        crypto: 'readonly',
         // Mocha globals
         describe: 'readonly',
         it: 'readonly',
