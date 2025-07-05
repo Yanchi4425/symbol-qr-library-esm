@@ -15,53 +15,52 @@
  */
 
 // internal dependencies
-import {ExampleAddContactQR} from './ExampleAddContactQR';
-import {ExampleExportAccountQR} from './ExampleExportAccountQR';
-import {ExampleExportMnemonicQR} from './ExampleExportMnemonicQR';
-import {ExampleRequestTransactionQR} from './ExampleRequestTransactionQR';
+// import { ExampleAddContactQR } from './ExampleAddContactQR.js';
+import { ExampleExportAccountQR } from './ExampleExportAccountQR.js';
+// import { ExampleExportMnemonicQR } from './ExampleExportMnemonicQR.js';
+// import { ExampleRequestTransactionQR } from './ExampleRequestTransactionQR.js';
 
-console.log("Starting examples for nem2-qr-library");
-console.log("");
+console.log('Starting examples for symbol-qr-library-lite');
+console.log('');
 
 (async () => {
+  // -----------------------------
+  // EX 1: Contact QR Code example
+  // -----------------------------
+  // console.log('1) Creating Contact QR-Code');
+  // console.log('');
 
-// -----------------------------
-// EX 1: Contact QR Code example
-// -----------------------------
-    console.log("1) Creating Contact QR-Code");
-    console.log("");
+  // const contactQR = new ExampleAddContactQR();
+  // await contactQR.execute();
+  // console.log('');
 
-    const contactQR = new ExampleAddContactQR();
-    await contactQR.execute();
-    console.log("");
+  // -----------------------------
+  // EX 2: Account QR Code example
+  // -----------------------------
+  console.log('2) Creating Account QR-Code');
+  console.log('');
 
-// -----------------------------
-// EX 2: Account QR Code example
-// -----------------------------
-    console.log("2) Creating Account QR-Code");
-    console.log("");
+  const accountQR = new ExampleExportAccountQR();
+  await accountQR.execute();
+  console.log('');
 
-    const accountQR = new ExampleExportAccountQR();
-    await accountQR.execute();
-    console.log("");
+  // -----------------------------
+  // EX 3: Mnemonic QR Code example
+  // -----------------------------
+  // console.log('3) Creating Mnemonic QR-Code');
+  // console.log('');
 
-// -----------------------------
-// EX 3: Mnemonic QR Code example
-// -----------------------------
-    console.log("3) Creating Mnemonic QR-Code");
-    console.log("");
+  // const mnemonicQR = new ExampleExportMnemonicQR();
+  // await mnemonicQR.execute();
+  // console.log('');
 
-    const mnemonicQR = new ExampleExportMnemonicQR();
-    await mnemonicQR.execute();
-    console.log("");
+  // -----------------------------
+  // EX 4: Transaction QR Code example
+  // -----------------------------
+  // console.log('4) Creating Transaction Request QR-Code');
+  // console.log('');
 
-// -----------------------------
-// EX 4: Transaction QR Code example
-// -----------------------------
-    console.log("3) Creating Transaction Request QR-Code");
-    console.log("");
-
-    const transactionQR = new ExampleRequestTransactionQR();
-    await transactionQR.execute();
-    console.log("");
+  // const transactionQR = new ExampleRequestTransactionQR();
+  // await transactionQR.execute();
+  // console.log('');
 })();
