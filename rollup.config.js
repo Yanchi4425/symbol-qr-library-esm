@@ -13,6 +13,25 @@ const external = [
   ...Object.keys(packageJson.peerDependencies || {}),
 ];
 
+// UMD用の設定（依存関係を含める）
+const umdConfig = {
+  input: "index.ts",
+  external: [], // UMDでは外部依存関係を含める
+  plugins: [
+    resolve({
+      preferBuiltins: false,
+      browser: true,
+    }),
+    commonjs(),
+    typescript({
+      tsconfig: "./tsconfig.json",
+      declaration: false,
+      declarationDir: undefined,
+      outDir: "dist",
+    }),
+  ],
+};
+
 // 共通設定
 const commonConfig = {
   input: "index.ts",
@@ -53,7 +72,7 @@ export default [
   },
   // UMD build (ブラウザ用)
   {
-    ...commonConfig,
+    ...umdConfig,
     output: {
       file: "dist/symbol-qr-library-esm.umd.js",
       format: "umd",
