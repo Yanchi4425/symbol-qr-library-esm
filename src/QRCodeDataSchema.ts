@@ -61,7 +61,7 @@ abstract class QRCodeDataSchema {
             "type": qr.type,
             "network_id": qr.networkType,
             "chain_id": qr.generationHash,
-            "data": data,
+            data,
         };
     }
 }

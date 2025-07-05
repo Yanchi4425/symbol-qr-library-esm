@@ -47,7 +47,7 @@ class RequestTransactionDataSchema extends QRCodeDataSchema {
         const payload = qr.transaction.serialize();
 
         return {
-            "payload": payload,
+            payload,
         };
     }
 

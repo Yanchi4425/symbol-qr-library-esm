@@ -49,7 +49,7 @@ class SignedTransactionDataSchema extends QRCodeDataSchema {
     const payload = qr.singedTransaction.toDTO();
 
     return {
-      payload: payload,
+      payload,
     };
   }
 
