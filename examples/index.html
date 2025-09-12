@@ -2,128 +2,250 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>Example for nem2-qr-library</title>
-        <meta name="description" content="Browser Examples for nem2-qr-library">
+        <title>Example symbol-qr-library</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <script src="../_bundles/catapult-qr.js"></script>
+        <!-- UMD bundle built by webpack -->
+        <script src="../release/catapult-qr.js"></script>
+        <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif; padding: 24px; }
+            h2 { margin-top: 32px; }
+            .row { display: flex; gap: 24px; align-items: flex-start; }
+            .col { flex: 1; min-width: 320px; }
+            img { border: 1px solid #ddd; }
+            pre { background: #f8f8f8; padding: 12px; overflow: auto; }
+            code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+            .kv { margin: 4px 0; }
+            /* restore long strings */
+            .kv code { display: inline-block; white-space: pre-wrap; word-break: break-all; overflow-wrap: anywhere; }
+        </style>
     </head>
 
     <body>
+    <h1>Verify QR Generation from Plain Parameters</h1>
+    <p>Generate QR from plain parameters, display JSON, image, and restore result.</p>
+
+    <h2>MnemonicQR</h2>
+    <div class="row">
+        <div class="col">
+            <h3>Input</h3>
+            <div class="kv"><b>mnemonic</b>:</div>
+            <pre id="mnemonic-input"></pre>
+            <div class="kv"><b>network_id</b>: <code id="mnemonic-network"></code></div>
+            <div class="kv"><b>chain_id</b>: <code id="mnemonic-chain"></code></div>
+            <div class="kv"><b>password(encrypted)</b>: <code id="mnemonic-password"></code></div>
+        </div>
+        <div class="col">
+            <h3>Generated Result (plain)</h3>
+            <img id="mnemonic-plain-img" width="250" height="250" />
+            <pre id="mnemonic-plain-json"></pre>
+            <div class="kv"><b>Restore(mnemonic)</b>: <code id="mnemonic-plain-restore"></code></div>
+        </div>
+        <div class="col">
+            <h3>Generated Result (encrypted)</h3>
+            <img id="mnemonic-encrypted-img" width="250" height="250" />
+            <pre id="mnemonic-encrypted-json"></pre>
+            <div class="kv"><b>Restore(mnemonic)</b>: <code id="mnemonic-encrypted-restore"></code></div>
+        </div>
+    </div>
+
+    <h2>AccountQR</h2>
+    <div class="row">
+        <div class="col">
+            <h3>Input</h3>
+            <div class="kv"><b>privateKey</b>:</div>
+            <pre id="account-input"></pre>
+            <div class="kv"><b>network_id</b>: <code id="account-network"></code></div>
+            <div class="kv"><b>chain_id</b>: <code id="account-chain"></code></div>
+            <div class="kv"><b>password(encrypted)</b>: <code id="account-password"></code></div>
+        </div>
+        <div class="col">
+            <h3>Generated Result (plain)</h3>
+            <img id="account-plain-img" width="250" height="250" />
+            <pre id="account-plain-json"></pre>
+            <div class="kv"><b>Restore(privateKey)</b>: <code id="account-plain-restore"></code></div>
+        </div>
+        <div class="col">
+            <h3>Generated Result (encrypted)</h3>
+            <img id="account-encrypted-img" width="250" height="250" />
+            <pre id="account-encrypted-json"></pre>
+            <div class="kv"><b>Restore(privateKey)</b>: <code id="account-encrypted-restore"></code></div>
+        </div>
+    </div>
+
+    <h2>ContactQR</h2>
+    <div class="row">
+        <div class="col">
+            <h3>Input</h3>
+            <div class="kv"><b>name/publicKey</b>:</div>
+            <pre id="contact-input"></pre>
+        </div>
+        <div class="col">
+            <h3>Generated Result</h3>
+            <img id="contact-img" width="250" height="250" />
+            <pre id="contact-json"></pre>
+            <div class="kv"><b>Restore(name)</b>: <code id="contact-restore-name"></code></div>
+            <div class="kv"><b>Restore(publicKey)</b>: <code id="contact-restore-pub"></code></div>
+        </div>
+    </div>
+
+    <h2>TransactionQR</h2>
+    <div class="row">
+        <div class="col">
+            <h3>Input</h3>
+            <div class="kv"><b>payload</b>:</div>
+            <pre id="tx-input"></pre>
+            <div class="kv"><b>network_id</b>: <code id="tx-network"></code></div>
+            <div class="kv"><b>chain_id</b>: <code id="tx-chain"></code></div>
+        </div>
+        <div class="col">
+            <h3>Generated Result</h3>
+            <img id="tx-img" width="250" height="250" />
+            <pre id="tx-json"></pre>
+            <div class="kv"><b>Restore(payload)</b>: <code id="tx-restore"></code></div>
+        </div>
+    </div>
+
 <script>
-const QRCodeType = CatapultQR.QRCodeType;
-const ContactQR = CatapultQR.ContactQR;
-const AccountQR = CatapultQR.AccountQR;
-const MnemonicQR = CatapultQR.MnemonicQR;
-const TransactionQR = CatapultQR.TransactionQR;
+const NETWORK = {
+  testnet: {
+    id: 152,
+    chainId: '49D6E1CE276A85B70EAFE52349AACCA389302E7A9754BCF1221E79494FC665A4',
+  },
+  mainnet: {
+    id: 104,
+    chainId: '57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6',
+  }
+}
+const TEST_MNEMONIC = `abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon art`;
+const TEST_PRIVATE_KEY = '1111111111111111111111111111111111111111111111111111111111111111';
+const PASSWORD = 'password';
 
-// ContactQR created from JSON
-const contactInfo = {
-    v: 3,
-    type: QRCodeType.AddContact,
-    network_id: 144,
-    chain_id: 'no-chain-id',
-    data: {
-        name: 'nemtech',
-        publicKey: 'D90ABF5BADC4E709E79E8F168F1629CD90D7F5B41010B7C0616C2121D516C11C'
-    }
-};
+document.getElementById('mnemonic-input').textContent = TEST_MNEMONIC;
+document.getElementById('mnemonic-network').textContent = String(NETWORK.testnet.id);
+document.getElementById('mnemonic-chain').textContent = NETWORK.testnet.chainId;
+document.getElementById('mnemonic-password').textContent = PASSWORD;
 
-// AccountQR created from JSON
-const accountInfo = {
-    v: 3,
-    type: QRCodeType.ExportAccount,
-    network_id: 144,
-    chain_id: "9F1979BEBA29C47E59B40393ABB516801A353CFC0C18BC241FEDE41939C907E7",
-    data: {
-        ciphertext: "a89541dbaa98ef9e9e498cd76ff46461bI3kQgjmHUgFRd5ySLf8D9VDJCFSIvZ8xJwcnG/kRrrdqP1Y7Fc20C0xOWOHmAloKyn066FidX5QCtFQgqf1NChsJH2t3qXaxXB1h36voqU=","salt":"cc53aeba6dab2f3d93fe080cb548a2353fa24a792e958f612dbb98eb5528471c"
-    }
-};
+document.getElementById('account-input').textContent = TEST_PRIVATE_KEY;
+document.getElementById('account-network').textContent = String(NETWORK.testnet.id);
+document.getElementById('account-chain').textContent = NETWORK.testnet.chainId;
+document.getElementById('account-password').textContent = PASSWORD;
 
-// MnemonicQR created from JSON
-const mnemonicInfo = {
-    v: 3,
-    type: QRCodeType.ExportMnemonic,
-    network_id: 144,
-    chain_id: "9F1979BEBA29C47E59B40393ABB516801A353CFC0C18BC241FEDE41939C907E7",
-    data: {
-        ciphertext: "a580e9cf65d22127626e44c3a2221487VRLN341zEoEHWBK381Xqkzhbt1L+CHfKpvsyYF+2N2CBFJJrZvA6+b5unxafklV0xHOaymakrAemfPAnQYfgsGMC5uyMaYTOS+cwQqDJ3+QAegaOh9CMV6A5ww5D2hE6OF6szbbOe7l6fSVrboFgMGXEuoO1jN5jkPnIN0MqeFgO0R62er2PkuHw4tiu5+kp33nnvwO7XwhQV7mVnNUOiw==","salt":"d2c6a1af61ff37fd9e699646ae279de5419e71efa820f2486d8055aaafa24503"
-    }
-};
+const {
+  MnemonicQR,
+  AccountQR,
+  ContactQR,
+  TransactionQR
+} = CatapultQR;
 
-// TransactionQR created from JSON
-const transactionInfo = {
-    v: 3,
-    type: 3,
-    network_id: 144,
-    chain_id: "9F1979BEBA29C47E59B40393ABB516801A353CFC0C18BC241FEDE41939C907E7",
-    data: {
-        payload: "A500000000000000000000000000000000000000000000000000000000000000"
-               + "0000000000000000000000000000000000000000000000000000000000000000"
-               + "0000000000000000000000000000000000000000000000000000000000000000"
-               + "000000000190544100000000000000008CDC693819000000912C7BC6007CB8AC"
-               + "B8000000000000000000000000000000000100010044B262C46CEABB85010000"
-               + "0000000000"
-    }
+async function renderMnemonic() {
+  // plain
+  const qrPlain = new MnemonicQR(TEST_MNEMONIC, NETWORK.testnet.id, NETWORK.testnet.chainId);
+  const jsonPlain = qrPlain.toJSON();
+  document.getElementById('mnemonic-plain-json').textContent = JSON.stringify(JSON.parse(jsonPlain), null, 2);
+  const imgPlain = await qrPlain.toBase64().toPromise();
+  document.getElementById('mnemonic-plain-img').setAttribute('src', imgPlain);
+  const restoredPlain = MnemonicQR.fromJSON(jsonPlain);
+  document.getElementById('mnemonic-plain-restore').textContent = restoredPlain.mnemonicPlainText;
+
+  // encrypted
+  const qrEnc = new MnemonicQR(TEST_MNEMONIC, NETWORK.testnet.id, NETWORK.testnet.chainId, PASSWORD);
+  const jsonEnc = qrEnc.toJSON();
+  document.getElementById('mnemonic-encrypted-json').textContent = JSON.stringify(JSON.parse(jsonEnc), null, 2);
+  const imgEnc = await qrEnc.toBase64().toPromise();
+  document.getElementById('mnemonic-encrypted-img').setAttribute('src', imgEnc);
+  const restoredEnc = MnemonicQR.fromJSON(jsonEnc, PASSWORD);
+  document.getElementById('mnemonic-encrypted-restore').textContent = restoredEnc.mnemonicPlainText;
 }
 
-// create QR codes
-const contactQR = ContactQR.fromJSON(JSON.stringify(contactInfo));
-const accountQR = AccountQR.fromJSON(JSON.stringify(accountInfo), 'password');
-const mnemonicQR = MnemonicQR.fromJSON(JSON.stringify(mnemonicInfo), 'password');
-const transactionQR = TransactionQR.fromJSON(JSON.stringify(transactionInfo));
+async function renderAccount() {
+  // plain
+  const qrPlain = new AccountQR(TEST_PRIVATE_KEY, NETWORK.testnet.id, NETWORK.testnet.chainId);
+  const jsonPlain = qrPlain.toJSON();
+  document.getElementById('account-plain-json').textContent = JSON.stringify(JSON.parse(jsonPlain), null, 2);
+  const imgPlain = await qrPlain.toBase64().toPromise();
+  document.getElementById('account-plain-img').setAttribute('src', imgPlain);
+  const restoredPlain = AccountQR.fromJSON(jsonPlain);
+  document.getElementById('account-plain-restore').textContent = restoredPlain.accountPrivateKey;
 
-window.addEventListener('DOMContentLoaded', function() {
-    (async function() {
-        const contact_base64 = await contactQR.toBase64().toPromise();
-        const account_base64 = await accountQR.toBase64().toPromise();
-        const mnemonic_base64 = await mnemonicQR.toBase64().toPromise();
-        const transaction_base64 = await transactionQR.toBase64().toPromise();
-        document.getElementById("qr-code-contact").setAttribute('src', contact_base64);
-        document.getElementById("qr-code-account").setAttribute('src', account_base64);
-        document.getElementById("qr-code-mnemonic").setAttribute('src', mnemonic_base64);
-        document.getElementById("qr-code-transaction").setAttribute('src', transaction_base64);
-    })();
+  // encrypted
+  const qrEnc = new AccountQR(TEST_PRIVATE_KEY, NETWORK.testnet.id, NETWORK.testnet.chainId, PASSWORD);
+  const jsonEnc = qrEnc.toJSON();
+  document.getElementById('account-encrypted-json').textContent = JSON.stringify(JSON.parse(jsonEnc), null, 2);
+  const imgEnc = await qrEnc.toBase64().toPromise();
+  document.getElementById('account-encrypted-img').setAttribute('src', imgEnc);
+  const restoredEnc = AccountQR.fromJSON(jsonEnc, PASSWORD);
+  document.getElementById('account-encrypted-restore').textContent = restoredEnc.accountPrivateKey;
+}
+
+// ------------------------------
+// ContactQR (plain)
+// ------------------------------
+const CONTACT_NAME = 'nemtech';
+const CONTACT_PUBLIC_KEY = 'D90ABF5BADC4E709E79E8F168F1629CD90D7F5B41010B7C0616C2121D516C11C';
+
+async function renderContact() {
+  // render input
+  const root = document.getElementById('contact-input');
+  if (root) {
+    root.textContent = JSON.stringify({ name: CONTACT_NAME, publicKey: CONTACT_PUBLIC_KEY }, null, 2);
+  }
+
+  const qr = new ContactQR(CONTACT_NAME, CONTACT_PUBLIC_KEY, NETWORK.testnet.id, NETWORK.testnet.chainId);
+  const json = qr.toJSON();
+  const img = await qr.toBase64().toPromise();
+  const parsed = ContactQR.fromJSON(json);
+
+  document.getElementById('contact-json').textContent = JSON.stringify(JSON.parse(json), null, 2);
+  document.getElementById('contact-img').setAttribute('src', img);
+  document.getElementById('contact-restore-name').textContent = parsed.name;
+  document.getElementById('contact-restore-pub').textContent = parsed.accountPublicKey;
+}
+
+// ------------------------------
+// TransactionQR (payload-based)
+// ------------------------------
+const TX_PAYLOAD ={
+  // mainnet transfer tx. to: NBPYVRSCYLIJH7VU6XNR7I3H7GBQOGHHAMLJC3A
+  mainnet: {
+    payload:"B00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000016854410100000000000000AE8CFE0521000000685F8AC642C2D093FEB4F5DB1FA367F9830718E70316916C0000010000000000F82302A23F91ED6B0000000000000000"
+  },
+  // testnet transfer tx. to: TAQWSKEY5CDWVFYG37XIVF3F6HR3CYVAIVQ66II
+  testnet:{
+    payload: "B00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000019854410100000000000000BE8F7D0E150000009821692898E8876A9706DFEE8A9765F1E3B162A04561EF210000010000000000CE8BA0672E21C0720000000000000000"
+  }
+}
+
+// ITransaction stub
+const makeTx = (payload) => ({ serialize: () => payload });
+
+async function renderTransaction() {
+  document.getElementById('tx-input').textContent = TX_PAYLOAD.testnet.payload;
+  document.getElementById('tx-network').textContent = String(NETWORK.testnet.id);
+  document.getElementById('tx-chain').textContent = NETWORK.testnet.chainId;
+
+  const tx = makeTx(TX_PAYLOAD.testnet.payload);
+  const qr = new TransactionQR(tx, NETWORK.testnet.id, NETWORK.testnet.chainId);
+  const json = qr.toJSON();
+  const img = await qr.toBase64().toPromise();
+
+  // restore (inject parser function)
+  const restored = TransactionQR.fromJSON(json, (payload) => makeTx(payload));
+
+  document.getElementById('tx-json').textContent = JSON.stringify(JSON.parse(json), null, 2);
+  document.getElementById('tx-img').setAttribute('src', img);
+  document.getElementById('tx-restore').textContent = restored.transaction.serialize();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  renderMnemonic();
+  renderAccount();
+  renderContact();
+  renderTransaction();
 });
 </script>
 
-        <div id="examples-wrapper">
-            <div class="example" rel="contact">
-                <p style="vertical-align: middle;">
-                    <span>ContactQR: </span>
-                    <img src=""
-                        width="250px"
-                        height="250px"
-                        id="qr-code-contact" />
-                </p>
-            </div>
-            <div class="example" rel="account">
-                <p style="vertical-align: middle;">
-                    <span>AccountQR: </span>
-                    <img src=""
-                        width="250px"
-                        height="250px"
-                        id="qr-code-account" />
-                </p>
-            </div>
-            <div class="example" rel="mnemonic">
-                <p style="vertical-align: middle;">
-                    <span>MnemonicQR: </span>
-                    <img src=""
-                        width="250px"
-                        height="250px"
-                        id="qr-code-mnemonic" />
-                </p>
-            </div>
-            <div class="example" rel="transaction">
-                <p style="vertical-align: middle;">
-                    <span>TransactionQR: </span>
-                    <img src=""
-                        width="250px"
-                        height="250px"
-                        id="qr-code-transaction" />
-                </p>
-            </div>
-        </div>
-	</body>
+    </body>
 </html>
+
+

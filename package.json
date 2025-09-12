@@ -29,6 +29,7 @@
     "chai": "^4.3.4",
     "copyfiles": "^2.4.1",
     "coveralls": "^3.1.1",
+    "http-server": "^14.1.1",
     "mocha": "^9.1.3",
     "nyc": "^15.1.0",
     "rxjs": "^7.5.1",
@@ -55,7 +56,8 @@
     "test:coveralls": "npm run test:cov | coveralls",
     "coveralls-report": "cat ./coverage/lcov.info | coveralls",
     "version": "echo $npm_package_version",
-    "doc": "typedoc --entryPointStrategy expand --out \"ts-docs/$(npm run version --silent)\" src"
+    "doc": "typedoc --entryPointStrategy expand --out \"ts-docs/$(npm run version --silent)\" src",
+    "serve:browser": " npm run build:browser && http-server . -p 8080"
   },
   "repository": {
     "type": "git",
