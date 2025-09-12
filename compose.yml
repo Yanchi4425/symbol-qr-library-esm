@@ -1,13 +1,15 @@
 services:
   dev:
     build: .
-    platform: linux/amd64   # M1/M2 でも amd64 を強制
     working_dir: /work
     volumes:
       - .:/work:cached
+      - node_modules:/work/node_modules
     environment:
-      - npm_config_python=/usr/bin/python2
+      - npm_config_python=/usr/bin/python3
       - npm_config_build_from_source=true
     tty: true
     stdin_open: true
     command: bash
+volumes:
+  node_modules:
