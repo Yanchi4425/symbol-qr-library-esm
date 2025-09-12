@@ -36,12 +36,12 @@ For ARM-based Macs or environments where native canvas dependencies fail to buil
 
 1. Build and start the development container:
    ```bash
-   docker-compose up -d dev
+   docker compose up -d dev
    ```
 
 2. Access the container shell:
    ```bash
-   docker-compose exec dev bash
+   docker compose exec dev bash
    ```
 
 3. Install dependencies inside the container:
