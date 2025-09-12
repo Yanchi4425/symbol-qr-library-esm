@@ -1,5 +1,4 @@
 var path = require("path");
-var webpack = require("webpack");
 
 var PATHS = {
   entryPoint: path.resolve(__dirname, 'index.ts'),
@@ -29,7 +28,14 @@ var config = {
   // Add resolve for `tsx` and `ts` files, otherwise Webpack would
   // only look for common JavaScript file extension (.js)
   resolve: {
-    extensions: ['.ts', '.tsx', '.js']
+    extensions: ['.ts', '.tsx', '.js'],
+    // Webpack 5 does not automatically polyfill Node.js core modules.
+    // Node polyfills have been moved to explicit fallbacks below.
+    fallback: {
+      fs: false,
+      tls: false,
+      net: false
+    }
   },
   // Activate source maps for the bundles in order to preserve the original
   // source when the user debugs the application
@@ -42,11 +48,6 @@ var config = {
         exclude: /node_modules/,
       },
     ],
-  },
-  node: {
-    fs: 'empty',
-    tls: 'empty',
-    net: 'empty'
   },
   performance: { 
     hints: false
