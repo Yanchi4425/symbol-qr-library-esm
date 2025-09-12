@@ -1,4 +1,4 @@
-FROM node:20-bookworm
+FROM node:22-bookworm
 SHELL ["/bin/bash","-lc"]
 
 # Install build dependencies for node-canvas (Cairo, Pango, etc.)
