@@ -1,16 +1,12 @@
-FROM --platform=linux/amd64 node:12-buster
+FROM node:20-bookworm
 SHELL ["/bin/bash","-lc"]
 
-# 1. Switch buster mirrors to archive + disable validity check
-RUN sed -i -e 's|deb.debian.org/debian|archive.debian.org/debian|g' \
-           -e 's|security.debian.org/debian-security|archive.debian.org/debian-security|g' \
-           /etc/apt/sources.list \
- && printf 'Acquire::Check-Valid-Until "false";\n' >/etc/apt/apt.conf.d/99no-check-valid
-
-# 2. Install dependencies (including python2)
+# Install build dependencies for node-canvas (Cairo, Pango, etc.)
+# and common native build toolchain (python3, make, g++, pkg-config)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
-    python2 \
+    python3 \
+    python3-pip \
     pkg-config \
     git \
     libcairo2-dev \
@@ -18,8 +14,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libjpeg-dev \
     libgif-dev \
     librsvg2-dev \
- && ln -sf /usr/bin/python2 /usr/bin/python \
- && npm i -g npm@6 \
  && rm -rf /var/lib/apt/lists/*
+
+ENV npm_config_python=/usr/bin/python3 \
+    npm_config_build_from_source=true
 
 WORKDIR /work
