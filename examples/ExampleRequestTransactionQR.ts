@@ -56,9 +56,15 @@ class ExampleRequestTransactionQR extends Example {
             }
         };
 
-        // create QR Code with JSON content
+        // Create TransactionQR from JSON using a payload creator function (like the HTML example)
+        const makeTxFromPayload = (payload: string) => {
+            // lightweight transaction replacement that simply exposes payload
+            return { serialize: () => payload } as any;
+        };
+
         const transactionQR = TransactionQR.fromJSON(
-            JSON.stringify(unsignedTransferInfo), TransactionMapping.createFromPayload,
+            JSON.stringify(unsignedTransferInfo),
+            makeTxFromPayload,
         );
 
         console.log("TransactionQR JSON: ", transactionQR.toJSON());
