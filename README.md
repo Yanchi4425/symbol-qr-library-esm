@@ -24,6 +24,55 @@ The software allows you to create the following QR types:
 
 - Node.js 12 LTS
 
+## Docker Setup (Alternative)
+
+For ARM-based Macs or environments where native canvas dependencies fail to build, Docker provides a reliable alternative:
+
+### Prerequisites
+
+- Docker and Docker Compose(v2+) installed on your system
+
+### Using Docker Compose
+
+1. Build and start the development container:
+   ```bash
+   docker-compose up -d dev
+   ```
+
+2. Access the container shell:
+   ```bash
+   docker-compose exec dev bash
+   ```
+
+3. Install dependencies inside the container:
+   ```bash
+   npm install
+   ```
+
+4. Run your development commands:
+   ```bash
+   npm run build
+   npm test
+   ```
+
+The container is configured with:
+- Node.js 12 LTS on Linux AMD64 platform
+- All required native dependencies for canvas compilation
+- Python 2 for native module building
+- Volume mounting for live code editing
+
+### Manual Docker Usage
+
+Alternatively, you can build and run the container manually:
+
+```bash
+# Build the Docker image
+docker build -t symbol-qr-library .
+
+# Run the container with volume mounting
+docker run -it --rm -v $(pwd):/work symbol-qr-library bash
+```
+
 ## Installation
 
 `npm install symbol-qr-library`
