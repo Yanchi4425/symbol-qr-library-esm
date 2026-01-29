@@ -24,6 +24,46 @@ The software allows you to create the following QR types:
 
 - Node.js 12 LTS
 
+## Docker (amd64) setup
+
+If you are on Apple Silicon or want a reproducible Node.js 12 environment, you can use Docker
+to run the toolchain in an amd64 container:
+
+```bash
+# Build the image
+docker build -t symbol-qr-dev:node12 .
+
+# Install dependencies
+docker run --rm -it \
+  --platform=linux/amd64 \
+  -v "$PWD:/work:cached" \
+  -w /work \
+  -e npm_config_python=/usr/bin/python2 \
+  -e npm_config_build_from_source=true \
+  symbol-qr-dev:node12 \
+  npm ci
+
+# Build
+docker run --rm -it \
+  --platform=linux/amd64 \
+  -v "$PWD:/work:cached" \
+  -w /work \
+  -e npm_config_python=/usr/bin/python2 \
+  -e npm_config_build_from_source=true \
+  symbol-qr-dev:node12 \
+  npm run build
+
+# Test
+docker run --rm -it \
+  --platform=linux/amd64 \
+  -v "$PWD:/work:cached" \
+  -w /work \
+  -e npm_config_python=/usr/bin/python2 \
+  -e npm_config_build_from_source=true \
+  symbol-qr-dev:node12 \
+  npm test
+```
+
 ## Installation
 
 `npm install symbol-qr-library`
