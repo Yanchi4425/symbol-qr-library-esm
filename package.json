@@ -52,7 +52,7 @@
     "lint:all": "tslint --project .",
     "test": "mocha --ui bdd --recursive ./dist/test",
     "docker:build-image": "docker build -t symbol-qr-dev:node12 .",
-    "docker:install": "docker run --rm -it --platform=linux/amd64 -v \"$PWD:/work:cached\" -w /work -e npm_config_python=/usr/bin/python2 -e npm_config_build_from_source=true symbol-qr-dev:node12 npm ci",
+    "docker:install": "docker run --rm -it --platform=linux/amd64 -v \"$PWD:/work:cached\" -w /work -e npm_config_python=/usr/bin/python2 -e npm_config_build_from_source=true symbol-qr-dev:node12 npm install",
     "docker:build": "docker run --rm -it --platform=linux/amd64 -v \"$PWD:/work:cached\" -w /work -e npm_config_python=/usr/bin/python2 -e npm_config_build_from_source=true symbol-qr-dev:node12 npm run build",
     "docker:test": "docker run --rm -it --platform=linux/amd64 -v \"$PWD:/work:cached\" -w /work -e npm_config_python=/usr/bin/python2 -e npm_config_build_from_source=true symbol-qr-dev:node12 npm test",
     "test:cov": "nyc --reporter=lcov --reporter=text-summary npm t",
