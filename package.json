@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "braces": ">=2.3.1",
-    "canvas": "^2.8.0",
+    "canvas": "^3.2.1",
     "crypto-js": "^4.1.1",
     "open": "^8.4.0",
     "qrcode": "^1.5.0"
@@ -51,10 +51,10 @@
     "build:browser": "npm run build && webpack",
     "lint:all": "tslint --project .",
     "test": "mocha --ui bdd --recursive ./dist/test",
-    "docker:build-image": "docker build -t symbol-qr-dev:node12 .",
-    "docker:install": "docker run --rm -it --platform=linux/amd64 -v \"$PWD:/work:cached\" -w /work -e npm_config_python=/usr/bin/python2 -e npm_config_build_from_source=true symbol-qr-dev:node12 npm install",
-    "docker:build": "docker run --rm -it --platform=linux/amd64 -v \"$PWD:/work:cached\" -w /work -e npm_config_python=/usr/bin/python2 -e npm_config_build_from_source=true symbol-qr-dev:node12 npm run build",
-    "docker:test": "docker run --rm -it --platform=linux/amd64 -v \"$PWD:/work:cached\" -w /work -e npm_config_python=/usr/bin/python2 -e npm_config_build_from_source=true symbol-qr-dev:node12 npm test",
+    "docker:build-image": "docker build -t symbol-qr-dev:node24 .",
+    "docker:install": "docker run --rm -it -v \"$PWD:/work:cached\" -w /work -e npm_config_python=/usr/bin/python3 symbol-qr-dev:node24 npm install",
+    "docker:build": "docker run --rm -it -v \"$PWD:/work:cached\" -w /work -e npm_config_python=/usr/bin/python3 symbol-qr-dev:node24 npm run build",
+    "docker:test": "docker run --rm -it -v \"$PWD:/work:cached\" -w /work -e npm_config_python=/usr/bin/python3 symbol-qr-dev:node24 npm test",
     "test:cov": "nyc --reporter=lcov --reporter=text-summary npm t",
     "test:coveralls": "npm run test:cov | coveralls",
     "coveralls-report": "cat ./coverage/lcov.info | coveralls",
@@ -64,6 +64,9 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nemtech/symbol-qr-library.git"
+  },
+  "engines": {
+    "node": ">=24.13.0"
   },
   "author": "Grégory Saive from Using Blockchain Ltd <greg@ubc.digital>",
   "license": "Apache-2.0",

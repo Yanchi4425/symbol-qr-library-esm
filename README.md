@@ -22,45 +22,39 @@ The software allows you to create the following QR types:
 
 ## Requirements
 
-- Node.js 12 LTS
+- Node.js 24.13.0
 
-## Docker (amd64) setup
+## Docker setup
 
-If you are on Apple Silicon or want a reproducible Node.js 12 environment, you can use Docker
-to run the toolchain in an amd64 container:
+If you want to keep node-canvas and native build dependencies off your host,
+you can use Docker to run the toolchain in a container:
 
 ```bash
 # Build the image
-docker build -t symbol-qr-dev:node12 .
+docker build -t symbol-qr-dev:node24 .
 
 # Install dependencies
 docker run --rm -it \
-  --platform=linux/amd64 \
   -v "$PWD:/work:cached" \
   -w /work \
-  -e npm_config_python=/usr/bin/python2 \
-  -e npm_config_build_from_source=true \
-  symbol-qr-dev:node12 \
-  npm ci
+  -e npm_config_python=/usr/bin/python3 \
+  symbol-qr-dev:node24 \
+  npm install
 
 # Build
 docker run --rm -it \
-  --platform=linux/amd64 \
   -v "$PWD:/work:cached" \
   -w /work \
-  -e npm_config_python=/usr/bin/python2 \
-  -e npm_config_build_from_source=true \
-  symbol-qr-dev:node12 \
+  -e npm_config_python=/usr/bin/python3 \
+  symbol-qr-dev:node24 \
   npm run build
 
 # Test
 docker run --rm -it \
-  --platform=linux/amd64 \
   -v "$PWD:/work:cached" \
   -w /work \
-  -e npm_config_python=/usr/bin/python2 \
-  -e npm_config_build_from_source=true \
-  symbol-qr-dev:node12 \
+  -e npm_config_python=/usr/bin/python3 \
+  symbol-qr-dev:node24 \
   npm test
 ```
 
